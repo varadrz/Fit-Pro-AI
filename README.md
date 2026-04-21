@@ -1,52 +1,49 @@
-# Vitality AI | Food & Fitness Intelligence
+# Vitality AI | Visionary Health Intelligence 
 
-A lightweight (<8MB) Health & Fitness Web App built with Vanilla JS, GSAP, and MediaPipe. Powered by local AI via Ollama.
+A premium, lightweight (<8MB) Health & Fitness platform built with a visionary Apple-inspired design language. Powered by Vanilla JavaScript, GSAP, and local AI via Ollama.
 
-## Features
-- **Nutrition Intelligence**: Natural language meal logging with quantity parsing.
-- **Health Risk Awareness**: Detects potential lifestyle risks (diabetes, heart, etc.) based on meal data.
-- **Supplement Guidance**: Suggests safe, non-medical supplements if deficiencies are detected.
-- **Restaurant Explorer**: Filter menu items by macros (protein, carbs, calories) from popular brands.
-- **AI Fitness Lab**: Real-time posture tracking for squats, pushups, and rotating toe touches using MediaPipe.
-- **Cinematic UI**: GSAP-powered scroll storytelling for an immersive experience.
+##  Design Philosophy
+- **Minimalism**: A clean, high-contrast interface focusing on single-column clarity and deep black space.
+- **Cinematic Motion**: Purposeful GSAP-driven scroll scaling and page transitions for an immersive experience.
+- **Saturated Transparency**: Navigational elements utilizing saturated backdrop-blur and ultra-thin borders.
 
-## Getting Started
+## 🚀 Visionary Features
+- **Nutrition Analytics**: Advanced natural language meal logging (e.g., "2 idli, 1 bowl sambar") with automated protein deficiency detection and metabolic insight.
+- **Fitness Lab**: AI-driven posture tracking for high-performance squats using MediaPipe Pose. Real-time feedback for optimal range of motion.
+- **Restaurant Explorer**: Full menu intelligence for **McDonald's, Domino's, Subway, KFC,** and **Pizza Hut** with macro-filtering (Protein, Carbs, Calories).
+- **Health Risk Awareness**: Proactive lifestyle screening for metabolic health triggers (Diabetes, Heart, Kidney, Liver) based on dietary patterns.
+- **Supplement Intelligence**: Non-medical deficiency correction suggestions (B12, Vitamin D, Protein) integrated into the nutrition workflow.
 
-### 1. Local Setup
-1. Clone the repository.
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the server:
-   ```bash
-   npm start
-   ```
-4. Open `http://localhost:3000`.
+## 🛠 Tech Stack
+- **Frontend**: HTML5, CSS3 (Custom Apple-inspired framework), Vanilla JavaScript.
+- **Animations**: GSAP 3.12 + ScrollTrigger.
+- **Intelligence**: Local Ollama (LLava model) + MediaPipe Pose.
+- **Backend**: Node.js (Express) with ES Module architecture.
+- **Deployment**: Dockerized for GCP Cloud Run or Firebase.
 
-### 2. AI Configuration (Ollama)
-The app uses a local LLM for nutrition analysis.
-1. Install [Ollama](https://ollama.ai).
-2. Pull the LLava model:
-   ```bash
-   ollama pull llava
-   ```
-3. Ensure Ollama is running (`ollama serve`).
+## 🏁 Getting Started
 
-## Deployment (GCP Cloud Run)
-This app is ready for serverless deployment on Google Cloud Platform.
-1. Build and push the Docker image:
-   ```bash
-   gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/vitality-ai
-   ```
-2. Deploy to Cloud Run:
-   ```bash
-   gcloud run deploy vitality-ai --image gcr.io/YOUR_PROJECT_ID/vitality-ai --platform managed
-   ```
+### 1. Requirements
+- **Node.js** (v18+)
+- **Ollama** (Running locally with `ollama pull llava`)
 
-## Tech Stack
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Animations**: GSAP + ScrollTrigger
-- **Pose Detection**: MediaPipe Pose
-- **Server**: Node.js (Express)
-- **AI Interface**: Local Ollama (LLava)
+### 2. Installation
+```bash
+npm install
+```
+
+### 3. Execution
+```bash
+npm start
+```
+The application will be live at `http://localhost:3000`.
+
+## 📦 Deployment
+This repository is optimized for **Google Cloud Platform (Cloud Run)**:
+```bash
+# Build & Deploy
+gcloud run deploy vitality-ai --source . --platform managed
+```
+
+---
+*Vitality AI is a demonstration of high-performance health intelligence. Always consult a medical professional for health advice.*

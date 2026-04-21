@@ -1,50 +1,72 @@
-let storytellingInitialized = false;
+gsap.registerPlugin(ScrollTrigger);
 
-function initStorytelling() {
-    if (storytellingInitialized || !window.gsap || !window.ScrollTrigger) return;
-    storytellingInitialized = true;
-    gsap.registerPlugin(ScrollTrigger);
-
-    const container = document.querySelector('.story-scroll-container');
-    const sections = gsap.utils.toArray('.story-section');
+function initAppleHome() {
+    const blocks = gsap.utils.toArray('.feature-block');
     
-    if (!container || sections.length === 0) return;
-
-    // Pin the container
-    ScrollTrigger.create({
-        trigger: container,
-        start: 'top top',
-        end: `+=${sections.length * 100}%`,
-        pin: true,
-        scrub: 1
+    // Hero scaling on scroll
+    gsap.to('.hero-apple', {
+        scrollTrigger: {
+            trigger: '.hero-apple',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true
+        },
+        scale: 0.9,
+        opacity: 0,
+        filter: 'blur(10px)'
     });
 
-    sections.forEach((section, i) => {
-        const content = section.querySelector('.story-content');
+    // Feature block reveals
+    blocks.forEach(block => {
+        const info = block.querySelector('.feature-info');
+        const img = block.querySelector('.feature-image-wrap');
         
         const tl = gsap.timeline({
             scrollTrigger: {
-                trigger: container,
-                start: `top+=${i * window.innerHeight} top`,
-                end: `+=${window.innerHeight}`,
-                scrub: 1
+                trigger: block,
+                start: 'top 80%',
+                end: 'bottom 20%',
+                toggleActions: 'play reverse play reverse'
             }
         });
 
-        // First section begins shown
-        if (i === 0) {
-            tl.to(content, { opacity: 0, y: -50, scale: 0.9, duration: 1 });
-        } else {
-            // Entrance
-            tl.fromTo(content, 
-                { opacity: 0, y: 50, scale: 0.8 }, 
-                { opacity: 1, y: 0, scale: 1, duration: 1 }
-            );
-            
-            // Exit if not last
-            if (i < sections.length - 1) {
-                tl.to(content, { opacity: 0, y: -50, scale: 1.1, duration: 1 }, "+=0.5");
-            }
-        }
+        tl.from(info, { opacity: 0, y: 50, duration: 1, ease: "power3.out" })
+          .from(img, { opacity: 0, scale: 0.8, y: 100, duration: 1.5, ease: "power4.out" }, "-=0.7");
     });
 }
+
+function animatePageTransition(target) {
+    gsap.fromTo(target, 
+        { opacity: 0 }, 
+        { opacity: 1, duration: 1, ease: "power2.inOut" }
+    );
+    
+    // More subtle entrance for internal cards
+    const cards = target.querySelectorAll('.card');
+    if(cards.length > 0) {
+        gsap.fromTo(cards, 
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.2 }
+        );
+    }
+}
+
+function initScrollReveals() {
+    const revealItems = document.querySelectorAll('.card, .section-title');
+    revealItems.forEach(item => {
+        gsap.from(item, {
+            scrollTrigger: {
+                trigger: item,
+                start: "top 90%",
+            },
+            opacity: 0,
+            y: 30,
+            duration: 1.2,
+            ease: "power2.out"
+        });
+    });
+}
+
+window.initAppleHome = initAppleHome;
+window.animatePageTransition = animatePageTransition;
+window.initScrollReveals = initScrollReveals;

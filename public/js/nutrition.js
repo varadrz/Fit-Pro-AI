@@ -71,17 +71,28 @@ analyzeBtn.addEventListener("click", async () => {
         document.getElementById('protein-val').innerText = data.protein + "g";
         const ps = document.getElementById('protein-status');
         ps.innerText = data.protein_status.toUpperCase();
-        ps.style.color = data.protein_status === 'adequate' ? '#22c55e' : '#facc15';
+        
+        // Consistent Apple Status Colors
+        if(data.protein_status === 'adequate') {
+            ps.style.color = '#34c759'; // Apple Success Green
+        } else {
+            ps.style.color = '#ff9f0a'; // Apple Warning Orange
+        }
 
         riskContainer.innerHTML = "";
         if (data.risk_summary) {
             data.risk_summary.forEach(r => {
                 const dv = document.createElement('div');
                 dv.className = 'risk-card';
+                // Apply Apple colors to border based on risk level
+                if(r.risk_level === 'high') dv.style.borderLeftColor = '#ff3b30';
+                else if(r.risk_level === 'moderate') dv.style.borderLeftColor = '#ff9f0a';
+                else dv.style.borderLeftColor = '#34c759';
+
                 dv.innerHTML = `
                     <span class="risk-level ${r.risk_level}">${r.risk_level} Risk</span>
                     <strong>${r.condition}</strong>
-                    <p style="font-size:0.8rem">${r.reason}</p>
+                    <p style="font-size:0.8rem; color:var(--text-muted); opacity:0.8;">${r.reason}</p>
                 `;
                 riskContainer.appendChild(dv);
             });
@@ -89,9 +100,9 @@ analyzeBtn.addEventListener("click", async () => {
 
         supplementsContainer.innerHTML = "";
         if (data.supplements && data.supplements.length > 0) {
-            supplementsContainer.innerHTML = "<h4>Optional Supplements (Consult Doctor)</h4>";
+            supplementsContainer.innerHTML = "<h4 style='font-size:0.9rem; margin-bottom:10px;'>Recommended Support</h4>";
             data.supplements.forEach(s => {
-                supplementsContainer.innerHTML += `<span style="display:inline-block; margin:5px; padding:5px 10px; background:rgba(255,255,255,0.1); border-radius:5px; font-size:0.8rem;">${s}</span>`;
+                supplementsContainer.innerHTML += `<span style="display:inline-block; margin:4px; padding:6px 12px; background:#1c1c1e; border:1px solid var(--glass-border); border-radius:100px; font-size:0.7rem; color:#fff; font-weight:500;">${s}</span>`;
             });
         }
 

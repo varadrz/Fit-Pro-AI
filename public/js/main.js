@@ -8,6 +8,7 @@ const routes = {
 function navigateTo(path, pushState = true) {
     const sectionId = routes[path] || '#hero';
     const targets = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.nav-links a');
     
     // Hide all
     targets.forEach(s => {
@@ -16,15 +17,20 @@ function navigateTo(path, pushState = true) {
         s.style.opacity = '0';
     });
     
+    // Update Nav Active State
+    navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === path);
+    });
+    
     // Show target
     const targetSection = document.querySelector(sectionId);
     if(targetSection) {
         targetSection.classList.add('active');
         targetSection.style.display = 'block';
         
-        // Simple GSAP fade-in if loaded
-        if (window.gsap) {
-            gsap.to(targetSection, { opacity: 1, duration: 0.5 });
+        // Trigger Page Animation
+        if (window.animatePageTransition) {
+            window.animatePageTransition(targetSection);
         } else {
             targetSection.style.opacity = '1';
         }
@@ -32,12 +38,14 @@ function navigateTo(path, pushState = true) {
         window.scrollTo(0, 0);
         
         // Init logic for specific sections
-        if (sectionId === '#hero' && typeof initStorytelling === 'function') {
-            initStorytelling();
+        if (sectionId === '#hero' && typeof initAppleHome === 'function') {
+            initAppleHome();
         }
         if (sectionId === '#restaurants' && typeof initRestaurantExplorer === 'function') {
             initRestaurantExplorer();
         }
+        
+        // Stop camera if leaving fitness lab
         if (sectionId !== '#fitness' && window.stopCamera) {
             window.stopCamera();
         }
@@ -61,6 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const currentPath = window.location.pathname;
     navigateTo(currentPath, true);
+    
+    if(window.initScrollReveals) {
+        window.initScrollReveals();
+    }
 });
 
 window.addEventListener('popstate', (e) => {

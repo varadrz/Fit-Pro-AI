@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitality AI | Food & Fitness Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">VITALITY.<span>AI</span></div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/nutrition">Nutrition</a>
+            <a href="/restaurant-lab">Restaurant Lab</a>
+            <a href="/fitness-lab">Fitness Lab</a>
+        </div>
+    </nav>
+
+    <section id="hero" class="hero">
+        <div class="story-scroll-container">
+            <div class="story-section">
+                <div class="story-content">
+                    <h2>🍛 Hidden <span>Gaps</span> in Your Diet</h2>
+                    <p>Modern lifestyles often lead to silent nutritional deficiencies.</p>
+                </div>
+            </div>
+            <div class="story-section">
+                <div class="story-content">
+                    <h2>⚠️ The <span>Protein</span> Paradox</h2>
+                    <p>Over 70% of individuals aren't meeting their daily requirements.</p>
+                </div>
+            </div>
+            <div class="story-section">
+                <div class="story-content">
+                    <h2>✅ Intelligent <span>Correction</span></h2>
+                    <p>Swap empty calories for nutrient-dense powerhouses.</p>
+                </div>
+            </div>
+            <div class="story-section">
+                <div class="story-content">
+                    <h2>💪 Take the <span>Leap</span></h2>
+                    <p>Ready to align your nutrition with performance?</p>
+                    <a href="/nutrition" class="btn btn-primary" style="margin-top:20px;">Start Nutrition Analysis</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="dashboard" class="dashboard section-padding">
+        <div class="container">
+            <h2 class="section-title">Health <span>Intelligence</span></h2>
+            
+            <div class="card health-profile" style="margin-bottom: 2rem;">
+                <h3>User Profile</h3>
+                <div class="profile-form-grid">
+                    <div class="form-group"><label>Age</label><input type="number" id="age" value="25"></div>
+                    <div class="form-group"><label>Weight (kg)</label><input type="number" id="weight" value="70"></div>
+                    <div class="form-group"><label>Lifestyle</label>
+                        <select id="lifestyle"><option value="sedentary">Sedentary</option><option value="moderate" selected>Moderate</option><option value="active">Active</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card nutrition-input">
+                    <h3>Log Your Meals</h3>
+                    <div class="quick-examples" style="margin-bottom: 1rem; display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-sm btn-outline quick-meal-btn">2 idli, 1 bowl sambar</button>
+                        <button class="btn btn-sm btn-outline quick-meal-btn">1 cup rice, dal, 100g paneer</button>
+                    </div>
+                    <textarea id="food-input" placeholder="e.g. 2 idli, 1 bowl sambar"></textarea>
+                    <button id="analyze-btn" class="btn btn-primary">Analyze Health Risks</button>
+                </div>
+                <div class="card nutrition-results" id="results-card">
+                    <div class="stats-grid">
+                        <div class="stat-item"><span class="label">Calories</span><span class="value" id="cal-val">0 kcal</span></div>
+                        <div class="stat-item"><span class="label">Protein</span><span class="value" id="protein-val">0g</span></div>
+                        <div class="stat-item" style="grid-column: span 2;"><span class="label">Protein Status</span><span class="value" id="protein-status" style="font-size:1.2rem;">---</span></div>
+                    </div>
+                    <div id="risk-summary-container" class="risk-grid"></div>
+                    <div id="supplements-container" style="margin-top: 1rem;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="restaurants" class="restaurants section-padding">
+        <div class="container">
+            <h2 class="section-title">Restaurant <span>Explorer</span></h2>
+            <div class="card search-box" style="margin-bottom: 2rem;">
+                <input type="text" id="res-search" placeholder="Search restaurant (e.g. McDonald's, Domino's)" style="width: 100%; background: #1e293b; border: 1px solid rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px; color: white;">
+            </div>
+            <div id="brand-list" class="brand-list"></div>
+            <div class="filter-bar">
+                <button class="btn btn-sm btn-outline filter-btn active" data-filter="all">All</button>
+                <button class="btn btn-sm btn-outline filter-btn" data-filter="high-protein">High Protein</button>
+                <button class="btn btn-sm btn-outline filter-btn" data-filter="low-carbs">Low Carbs</button>
+                <button class="btn btn-sm btn-outline filter-btn" data-filter="low-calories">Low Cals</button>
+                <button class="btn btn-sm btn-outline filter-btn" data-filter="veg">Veg</button>
+                <button class="btn btn-sm btn-outline filter-btn" data-filter="non-veg">Non-Veg</button>
+            </div>
+            <div id="menu-container" class="menu-container"></div>
+        </div>
+    </section>
+
+    <section id="fitness" class="fitness section-padding">
+        <div class="container">
+            <h2 class="section-title">Fitness <span>Lab</span></h2>
+            <div class="fitness-grid">
+                <div class="webcam-container card">
+                    <video id="video" autoplay playsinline></video>
+                    <canvas id="canvas"></canvas>
+                    <div class="overlay-data">
+                        <div class="data-item">Feedback: <span id="feedback-display">Waiting...</span></div>
+                        <div class="data-item">Reps: <span id="rep-count">0</span></div>
+                    </div>
+                </div>
+                <div class="instruction-card card">
+                    <h3>AI Posture Tracking</h3>
+                    <div class="exercise-selector" style="margin-top: 1rem; display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-sm btn-primary exercise-btn" data-exercise="squat" onclick="setExercise('squat')">Squats</button>
+                        <button class="btn btn-sm btn-outline exercise-btn" data-exercise="pushup" onclick="setExercise('pushup')">Pushups</button>
+                        <button class="btn btn-sm btn-outline exercise-btn" data-exercise="rotating_toe_touch" onclick="setExercise('rotating_toe_touch')">Toe Touch</button>
+                    </div>
+                    <button id="start-cam" class="btn btn-primary" style="margin-top: 1.5rem; width: 100%;">Start Camera</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils"></script>
+
+    <script src="/js/gsap-animations.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/nutrition.js"></script>
+    <script src="/js/restaurants.js"></script>
+    <script src="/js/pose.js"></script>
+</body>
+</html>

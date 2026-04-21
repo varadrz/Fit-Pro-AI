@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+# Vitality AI | Food & Fitness Intelligence
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight (<8MB) Health & Fitness Web App built with Vanilla JS, GSAP, and MediaPipe. Powered by local AI via Ollama.
 
-Currently, two official plugins are available:
+## Features
+- **Nutrition Intelligence**: Natural language meal logging with quantity parsing.
+- **Health Risk Awareness**: Detects potential lifestyle risks (diabetes, heart, etc.) based on meal data.
+- **Supplement Guidance**: Suggests safe, non-medical supplements if deficiencies are detected.
+- **Restaurant Explorer**: Filter menu items by macros (protein, carbs, calories) from popular brands.
+- **AI Fitness Lab**: Real-time posture tracking for squats, pushups, and rotating toe touches using MediaPipe.
+- **Cinematic UI**: GSAP-powered scroll storytelling for an immersive experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Getting Started
 
-## React Compiler
+### 1. Local Setup
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the server:
+   ```bash
+   npm start
+   ```
+4. Open `http://localhost:3000`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 2. AI Configuration (Ollama)
+The app uses a local LLM for nutrition analysis.
+1. Install [Ollama](https://ollama.ai).
+2. Pull the LLava model:
+   ```bash
+   ollama pull llava
+   ```
+3. Ensure Ollama is running (`ollama serve`).
 
-## Expanding the ESLint configuration
+## Deployment (GCP Cloud Run)
+This app is ready for serverless deployment on Google Cloud Platform.
+1. Build and push the Docker image:
+   ```bash
+   gcloud builds submit --tag gcr.io/YOUR_PROJECT_ID/vitality-ai
+   ```
+2. Deploy to Cloud Run:
+   ```bash
+   gcloud run deploy vitality-ai --image gcr.io/YOUR_PROJECT_ID/vitality-ai --platform managed
+   ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Tech Stack
+- **Frontend**: HTML5, CSS3, Vanilla JavaScript
+- **Animations**: GSAP + ScrollTrigger
+- **Pose Detection**: MediaPipe Pose
+- **Server**: Node.js (Express)
+- **AI Interface**: Local Ollama (LLava)

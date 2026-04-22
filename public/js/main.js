@@ -82,7 +82,35 @@ document.addEventListener('DOMContentLoaded', () => {
     if(window.initScrollReveals) {
         window.initScrollReveals();
     }
+
+    // Initialize Stats Counter Animation
+    initStatsCounters();
 });
+
+function initStatsCounters() {
+    setTimeout(() => {
+        const counters = document.querySelectorAll('.counter-val');
+        counters.forEach(counter => {
+            const target = parseFloat(counter.getAttribute('data-val'));
+            const obj = { value: 0 };
+            
+            gsap.to(obj, {
+                value: target,
+                duration: 2.5,
+                delay: 0.5,
+                ease: "expo.out",
+                scrollTrigger: {
+                    trigger: counter,
+                    start: "top 95%",
+                    toggleActions: "play none none none"
+                },
+                onUpdate: () => {
+                    counter.innerText = obj.value.toFixed(obj.value % 1 === 0 ? 0 : 1);
+                }
+            });
+        });
+    }, 100);
+}
 
 window.addEventListener('popstate', (e) => {
     const path = e.state ? e.state.path : window.location.pathname;

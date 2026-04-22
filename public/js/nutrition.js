@@ -10,6 +10,40 @@ const supplementsContainer = document.querySelector("#supplements-container");
 const resultsCard = document.querySelector("#results-card");
 const quickPills = document.querySelectorAll(".quick-meal-pill");
 
+// Persistence Key
+const METABOLIC_LOG_KEY = 'vitality_daily_log';
+
+class LogManager {
+    static getLog() {
+        const raw = localStorage.getItem(METABOLIC_LOG_KEY);
+        return raw ? JSON.parse(raw) : [];
+    }
+
+    static saveLog(log) {
+        localStorage.setItem(METABOLIC_LOG_KEY, JSON.stringify(log));
+    }
+
+    static addEntry(entry) {
+        const log = this.getLog();
+        log.push({ ...entry, id: Date.now(), timestamp: new Date().toLocaleTimeString() });
+        this.saveLog(log);
+        return log;
+    }
+
+    static removeEntry(id) {
+        const log = this.getLog().filter(e => e.id !== id);
+        this.saveLog(log);
+        return log;
+    }
+
+    static clear() {
+        localStorage.removeItem(METABOLIC_LOG_KEY);
+        return [];
+    }
+}
+
+let lastAnalysis = null;
+
 quickPills.forEach(p => {
     p.addEventListener('click', () => {
         foodInput.value = p.innerText;

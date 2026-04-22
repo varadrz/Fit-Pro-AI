@@ -1,88 +1,44 @@
 import { analyzeFoodLocal } from './ai-engine.js';
 
-const restaurantData = [
-    {
-        "restaurant": "California Burrito",
-        "logo": "https://www.californiaburrito.in/images/logo.png"
-    },
-    {
-        "restaurant": "Haldiram's",
-        "logo": "https://www.logo.wine/a/logo/Haldiram's/Haldiram's-Logo.wine.svg"
-    },
-    {
-        "restaurant": "Subway",
-        "logo": "https://www.logo.wine/a/logo/Subway_(restaurant)/Subway_(restaurant)-Logo.wine.svg"
-    },
-    {
-        "restaurant": "McDonald's",
-        "logo": "https://www.logo.wine/a/logo/McDonald's/McDonald's-Logo.wine.svg"
-    },
-    {
-        "restaurant": "Domino's",
-        "logo": "https://www.logo.wine/a/logo/Domino's_Pizza/Domino's_Pizza-Logo.wine.svg"
-    },
-    {
-        "restaurant": "KFC",
-        "logo": "https://www.logo.wine/a/logo/KFC/KFC-Logo.wine.svg"
-    },
-    {
-        "restaurant": "Pizza Hut",
-        "logo": "https://www.pngall.com/wp-content/uploads/15/Pizza-Hut-Logo-PNG-File.png"
-    }
-];
-
 const menuCache = {};
+const restaurantData = [
+    { id: 1, restaurant: "McDonald's", logo: "https://logo.clearbit.com/mcdonalds.com", tags: ["fast-food", "non-veg"] },
+    { id: 2, restaurant: "Starbucks", logo: "https://logo.clearbit.com/starbucks.com", tags: ["cafe", "veg"] },
+    { id: 3, restaurant: "Subway", logo: "https://logo.clearbit.com/subway.com", tags: ["healthy", "veg"] },
+    { id: 4, restaurant: "KFC", logo: "https://logo.clearbit.com/kfc.com", tags: ["fast-food", "non-veg"] },
+    { id: 5, restaurant: "Pizza Hut", logo: "https://logo.clearbit.com/pizzahut.com", tags: ["pizza", "veg"] },
+    { id: 6, restaurant: "Chipotle", logo: "https://logo.clearbit.com/chipotle.com", tags: ["mexican", "non-veg"] },
+    { id: 7, restaurant: "Burger King", logo: "https://logo.clearbit.com/burgerking.com", tags: ["fast-food", "non-veg"] },
+    { id: 8, restaurant: "Taco Bell", logo: "https://logo.clearbit.com/tacobell.com", tags: ["mexican", "non-veg"] },
+    { id: 9, restaurant: "Domino's", logo: "https://logo.clearbit.com/dominos.com", tags: ["pizza", "veg"] },
+    { id: 10, restaurant: "CFA", logo: "https://logo.clearbit.com/chick-fil-a.com", tags: ["fast-food", "non-veg"] },
+    { id: 11, restaurant: "Panera Bread", logo: "https://logo.clearbit.com/panerabread.com", tags: ["cafe", "veg"] },
+    { id: 12, restaurant: "Dunkin'", logo: "https://logo.clearbit.com/dunkindonuts.com", tags: ["cafe", "veg"] }
+];
 
 async function fetchDynamicMenu(brandName) {
     if (menuCache[brandName]) return menuCache[brandName];
-
-    const isIndianBrand = brandName.toLowerCase().includes('haldiram') || brandName.toLowerCase().includes('burrito');
-    if (isIndianBrand) return await fetchIndianDiscovery(brandName);
-
-    const apiKey = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_USDA_API_KEY) || "DEMO_KEY";
-    const url = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(brandName)}&pageSize=24&dataType=Branded`;
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("FDC API Error");
-        const data = await response.json();
-        if (!data.foods || data.foods.length === 0) return null;
-
-        const items = data.foods.map(f => {
-            const nuts = f.foodNutrients || [];
-            const getNut = (id) => Math.round(nuts.find(n => n.nutrientId === id || n.nutrientNumber === id.toString())?.value || 0);
-            
-            // Refined Veg/Non-Veg logic using ingredient list
-            const ing = (f.ingredients || "").toLowerCase();
-            const nvKeywords = ['chicken', 'beef', 'pork', 'lamb', 'egg', 'fish', 'meat', 'turkey', 'gelatin', 'whey'];
-            const isNV = nvKeywords.some(k => ing.includes(k)) || f.description.toLowerCase().includes('chicken') || f.description.toLowerCase().includes('beef');
-
-            return {
-                name: f.description.replace(new RegExp(brandName, 'gi'), '').trim() || f.description,
-                brand: brandName,
-                calories: getNut(1008) || getNut(208),
-                protein_g: getNut(1003),
-                carbs_g: getNut(1005),
-                fats_g: getNut(1004),
-                type: isNV ? 'non-veg' : 'veg',
-                ingredients: f.ingredients ? f.ingredients.split(',').map(s => s.trim().replace(/\.$/, '')) : [],
-                image: `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=600&auto=format&fit=crop&sig=${Math.random()}`
-            };
-        }).filter(item => item.calories > 0);
-
-        if (items.length > 0) menuCache[brandName] = items;
-        return items;
-    } catch (err) {
-        console.warn(`[USDA Sync] Failed for ${brandName}:`, err.message);
-        return null;
-    }
+    
+    // Check if it's an Indian brand (heuristic for this lab)
+    const isIndianBrand = brandName.toLowerCase().match(/indian|masala|curry|vada|taco|burger/); // Broad match for discovery
+    const items = await fetchIndianDiscovery(brandName);
+    
+    menuCache[brandName] = items;
+    return items;
 }
 
+/**
+ * Hybrid Discovery Engine:
+ * Primary: Proximity Indian API (via Proxy)
+ * Fallback: TheMealDB (Reliable Indian Filter)
+ * Tertiary: Heuristic Generator
+ */
 async function fetchIndianDiscovery(brandName) {
     const token = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_INDIAN_FOOD_API_TOKEN);
-    const url = `https://indian-food-db.herokuapp.com/api/getfoodlistbycuisine?cuisine=Indian`; // Standardized endpoint
+    const url = `/api-indian/getfoodlistbycuisine?cuisine=Indian`;
 
     try {
+        console.log("[Indian Discovery] Attempting Primary Pulse:", url);
         const response = await fetch(url, {
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -90,41 +46,72 @@ async function fetchIndianDiscovery(brandName) {
             }
         });
         
-        let data = await response.json();
+        if (!response.ok) throw new Error("Primary Pulse Failure (404/CORS)");
+
+        const data = await response.json();
+        const meals = data.meals || data.data || (Array.isArray(data) ? data : []);
         
-        // Handle variations in API response structure (Standardizing to array)
-        const meals = data.meals || data.data || (Array.isArray(data) ? data : null);
-        if (!meals) return null;
+        if (!meals || meals.length === 0) throw new Error("Empty Payload");
+        
+        return await processMealResults(meals, brandName);
 
-        const dishes = await Promise.all(meals.slice(0, 12).map(async (m) => {
-            const foodName = m.strMeal || m.food_name || m.name;
-            const analysis = await analyzeFoodLocal(foodName, { weight_kg: 70 });
-            
-            // Extraction logic for ingredients vary by API; mapping standard formats
-            const ings = m.ingredients ? 
-                         (Array.isArray(m.ingredients) ? m.ingredients.join(', ') : m.ingredients) : 
-                         "Authentic regional spices, base protein, aromatic base.";
-
-            return {
-                name: foodName,
-                brand: brandName,
-                calories: analysis.calories || 350,
-                protein_g: analysis.protein || 12,
-                carbs_g: analysis.carbs || 45,
-                fats_g: analysis.fats || 15,
-                type: foodName.toLowerCase().match(/chicken|lamb|mutton|fish|prawn|egg|beef/) ? 'non-veg' : 'veg',
-                image: m.strMealThumb || m.image || `https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80`,
-                ingredients: ings,
-                verified: true
-            };
-        }));
-
-        menuCache[brandName] = dishes;
-        return dishes;
     } catch (err) {
-        console.error("[Indian Discovery] API Error using VITE_INDIAN_FOOD_API_TOKEN:", err);
-        return null;
+        console.warn("[Indian Discovery] Primary Relay Failed. Engaging MealDB Fallback.", err.message);
+        return await fetchMealDBFallback(brandName);
     }
+}
+
+async function fetchMealDBFallback(brandName) {
+    const backupUrl = `https://www.themealdb.com/api/json/v1/1/filter.php?c=Indian`;
+    try {
+        const resp = await fetch(backupUrl);
+        const data = await resp.json();
+        if (!data.meals) throw new Error("MealDB Empty");
+        return await processMealResults(data.meals, brandName);
+    } catch (e) {
+        console.error("[Discovery] Critical Network Failure. Initializing Heuristic Synthesis.");
+        return generateSyntheticMenu(brandName);
+    }
+}
+
+async function processMealResults(meals, brandName) {
+    return await Promise.all(meals.slice(0, 10).map(async (m) => {
+        const foodName = m.strMeal || m.food_name || m.name || "Regional Specialty";
+        const analysis = await analyzeFoodLocal(foodName, { weight_kg: 70, lifestyle: 'moderate' });
+        
+        return {
+            id: m.idMeal || m.food_id || Math.random(),
+            name: foodName,
+            brand: brandName,
+            calories: analysis.calories || 350,
+            protein_g: analysis.protein || 12,
+            carbs_g: analysis.carbs || 45,
+            fats_g: analysis.fats || 15,
+            type: foodName.toLowerCase().match(/chicken|lamb|mutton|fish|prawn|egg|beef/) ? 'non-veg' : 'veg',
+            image: m.strMealThumb || m.image || `https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80`,
+            ingredients: (analysis.risk_summary?.[0]?.reason || "Authentic regional spices").split(',').slice(0, 3),
+            verified: true
+        };
+    }));
+}
+
+function generateSyntheticMenu(brandName) {
+    const common = [
+        { name: "Paneer Butter Masala", p: 18, c: 12, f: 32, cal: 420 },
+        { name: "Chicken Tikka", p: 28, c: 5, f: 12, cal: 310 },
+        { name: "Dal Makhani", p: 12, c: 35, f: 18, cal: 350 },
+        { name: "Vegetable Biryani", p: 8, c: 55, f: 12, cal: 380 }
+    ];
+    return common.map(item => ({
+        ...item,
+        id: Math.random(),
+        brand: brandName,
+        protein_g: item.p, carbs_g: item.c, fats_g: item.f, calories: item.cal,
+        type: item.name.includes('Chicken') ? 'non-veg' : 'veg',
+        image: `https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=600&q=80`,
+        ingredients: ['Spices', 'Regional Base'],
+        verified: false
+    }));
 }
 
 let detailChart = null;
@@ -157,12 +144,11 @@ function showDishDetail(dish) {
 
     modal.style.display = "flex";
 
-    // Chart.js Pie Chart
     const ctx = document.getElementById('detailChart').getContext('2d');
     if (detailChart) detailChart.destroy();
     
     const data = [dish.protein_g * 4, dish.carbs_g * 4, dish.fats_g * 9];
-    const vibrantColors = ['#06b6d4', '#f59e0b', '#f43f5e']; // Cyan, Amber, Rose
+    const vibrantColors = ['#06b6d4', '#f59e0b', '#f43f5e'];
 
     detailChart = new Chart(ctx, {
         type: 'pie',
@@ -193,23 +179,14 @@ function showDishDetail(dish) {
         }
     });
 
-    // Update URL logic
-    const slugify = (text) => text.toString().toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-');
-    const brandSlug = slugify(dish.brand);
-    const itemSlug = slugify(dish.name);
-    window.history.pushState({ path: '/restaurant-lab' }, '', `/restaurant-lab/${brandSlug}/${itemSlug}`);
+    const slugify = (t) => t.toLowerCase().trim().replace(/\s+/g,'-').replace(/[^\w-]+/g,'');
+    window.history.pushState({}, '', `/restaurant-lab/${slugify(dish.brand)}/${slugify(dish.name)}`);
 
     document.querySelector("#close-modal").onclick = () => {
         modal.style.display = "none";
-        window.history.pushState({ path: '/restaurant-lab' }, '', '/restaurant-lab');
+        window.history.pushState({}, '', '/restaurant-lab');
     };
 }
-
-// Handle Browser Back Button
-window.addEventListener('popstate', (e) => {
-    const modal = document.querySelector("#dish-modal");
-    if (modal) modal.style.display = "none";
-});
 
 function initRestaurantExplorer() {
     const list = document.querySelector("#brand-list");
@@ -220,8 +197,7 @@ function initRestaurantExplorer() {
 
     function renderB(q = "") {
         list.innerHTML = "";
-        const filtered = restaurantData.filter(x => x.restaurant.toLowerCase().includes(q.toLowerCase()));
-        filtered.forEach(b => {
+        restaurantData.filter(x => x.restaurant.toLowerCase().includes(q.toLowerCase())).forEach(b => {
              const d = document.createElement('div');
              d.className = `card brand-card ${sel === b.restaurant ? 'active' : ''}`;
              d.innerHTML = `
@@ -230,75 +206,67 @@ function initRestaurantExplorer() {
                 </div>
                 <h4 style="font-size:0.8rem; margin-top:10px;">${b.restaurant}</h4>
             `;
-            d.onclick = async () => { 
-                sel = b.restaurant; 
-                renderB(q); 
-                await renderM(); 
+            d.onclick = async () => {
+                sel = b.restaurant;
+                renderB(q);
+                menuContainer.innerHTML = `<div class="loader-wrap"><div class="loader"></div><p>Synthesizing Menu...</p></div>`;
+                const m = await fetchDynamicMenu(b.restaurant);
+                renderM(m);
             };
             list.appendChild(d);
         });
     }
 
-    async function renderM() {
-        if (!sel) return menuContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; opacity: 0.5;'>Select a brand to discover real-time menu data</p>";
-        
-        menuContainer.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-                <p class="pulse-loading" style="font-size: 0.9rem; color: var(--text-muted);">Syncing with Food Database...</p>
-            </div>
-        `;
-
-        let items = await fetchDynamicMenu(sel);
-        
-        if (!items || items.length === 0) {
-            return menuContainer.innerHTML = "<p style='grid-column: 1/-1; text-align: center; opacity: 0.5;'>No direct menu records found. Try searching for a specific item.</p>";
+    function renderM(items) {
+        menuContainer.innerHTML = "";
+        if(!items) {
+             menuContainer.innerHTML = `<p style="text-align:center; opacity:0.5; grid-column: 1/-1;">Neural synthesis failed for this outlet. Select another entity.</p>`;
+             return;
         }
 
-        // Apply filters
-        let fItems = [...items];
-        if(currF === 'veg') fItems = fItems.filter(i=>i.type==='veg');
-        if(currF === 'non-veg') fItems = fItems.filter(i=>i.type==='non-veg');
-        if(currF === 'high-protein') fItems.sort((a,b)=>b.protein_g - a.protein_g);
-        if(currF === 'low-carbs') fItems.sort((a,b)=>a.carbs_g - b.carbs_g);
-        if(currF === 'low-calories') fItems.sort((a,b)=>a.calories - b.calories);
+        const filtered = items.filter(i => {
+            if (currF === "all") return true;
+            if (currF === "high-protein") return i.protein_g > 20;
+            if (currF === "low-carbs") return i.carbs_g < 20;
+            if (currF === "low-calories") return i.calories < 400;
+            if (currF === "veg") return i.type === "veg";
+            if (currF === "non-veg") return i.type === "non-veg";
+            return true;
+        });
 
-        menuContainer.innerHTML = "";
-        fItems.forEach((i, idx) => {
-            const div = document.createElement('div');
-            div.className = "card menu-item-card";
-            div.style = `opacity: 0; transform: translateY(10px); animation: fadeInEntry 0.5s ease forwards ${idx * 0.05}s; cursor:pointer; padding:0; overflow:hidden;`;
-            div.innerHTML = `
-                <div style="position:relative; height:180px;">
-                    <img src="${i.image}" class="menu-img" onerror="this.src='https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=600&q=80'" alt="${i.name}" style="width:100%; height:100%; object-fit:cover;">
-                    <span style="position:absolute; top:12px; right:12px; font-size:1.2rem; filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));">${i.type==='veg'?'🟩':'🟥'}</span>
-                    ${i.verified ? '<span style="position:absolute; bottom:12px; left:12px; background:var(--apple-blue); color:white; font-size:9px; padding:3px 8px; border-radius:100px; font-weight:700; letter-spacing:0.5px;">AI ANALYZED</span>' : ''}
-                </div>
-                <div style="padding:15px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; background:rgba(255,255,255,0.03); padding:8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
-                        <div style="text-align:center;"><div style="font-size:0.6rem; opacity:0.5; margin-bottom:2px;">KCAL</div><div style="font-size:0.85rem; font-weight:700;">${i.calories}</div></div>
-                        <div style="text-align:center;"><div style="font-size:0.6rem; opacity:0.5; margin-bottom:2px; color:#06b6d4;">PROTEIN</div><div style="font-size:0.85rem; font-weight:700; color:#06b6d4;">${i.protein_g}g</div></div>
-                        <div style="text-align:center;"><div style="font-size:0.6rem; opacity:0.5; margin-bottom:2px; color:#f59e0b;">NET CARBS</div><div style="font-size:0.85rem; font-weight:700; color:#f59e0b;">${i.carbs_g}g</div></div>
-                        <div style="text-align:center;"><div style="font-size:0.6rem; opacity:0.5; margin-bottom:2px; color:#f43f5e;">FATS</div><div style="font-size:0.85rem; font-weight:700; color:#f43f5e;">${i.fats_g}g</div></div>
+        filtered.forEach(item => {
+            const card = document.createElement('div');
+            card.className = "card menu-card reveal-up";
+            card.innerHTML = `
+                <img src="${item.image}" alt="${item.name}">
+                <div class="menu-card-content">
+                    <div style="display:flex; justify-content:space-between; align-items:start;">
+                        <h4 style="margin:0; font-size:1rem;">${item.name}</h4>
+                        <span class="badge ${item.type}">${item.type.toUpperCase()}</span>
                     </div>
-                    <h4 style="margin:0; font-size:0.95rem; line-height:1.2; font-weight:600; color:#fff;">${i.name}</h4>
+                    <div class="menu-macros" style="margin-top:1rem; display:flex; gap:12px; font-size:0.75rem; font-weight:700;">
+                        <span style="color:#06b6d4;">P ${item.protein_g}g</span>
+                        <span style="color:#f59e0b;">C ${item.carbs_g}g</span>
+                        <span style="color:#f43f5e;">F ${item.fats_g}g</span>
+                        <span style="opacity:0.6;">${item.calories} KCAL</span>
+                    </div>
                 </div>
             `;
-            div.onclick = () => showDishDetail(i);
-            menuContainer.appendChild(div);
+            card.onclick = () => showDishDetail(item);
+            menuContainer.appendChild(card);
         });
+        
+        gsap.from(".menu-card", { y: 20, opacity: 0, stagger: 0.05, duration: 0.6, ease: "power4.out" });
     }
 
-    const searchInput = document.querySelector("#res-search");
-    if(searchInput) {
-        searchInput.oninput = (e) => renderB(e.target.value);
-    }
+    document.querySelector("#res-search").oninput = (e) => renderB(e.target.value);
     
-    filters.forEach(btn => {
-        btn.onclick = async () => {
-            filters.forEach(x => x.classList.remove('active'));
-            btn.classList.add('active');
-            currF = btn.dataset.filter;
-            await renderM();
+    filters.forEach(f => {
+        f.onclick = () => {
+            filters.forEach(b => b.classList.remove('active'));
+            f.classList.add('active');
+            currF = f.dataset.filter;
+            fetchDynamicMenu(sel).then(renderM);
         };
     });
 
@@ -306,4 +274,3 @@ function initRestaurantExplorer() {
 }
 
 window.initRestaurantExplorer = initRestaurantExplorer;
-

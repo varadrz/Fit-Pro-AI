@@ -1,6 +1,6 @@
 const routes = {
     '/': '#hero',
-    '/nutrition': '#dashboard',
+    '/nutrition-lab': '#dashboard',
     '/restaurant-lab': '#restaurants',
     '/fitness-lab': '#fitness'
 };
@@ -10,11 +10,25 @@ function navigateTo(path, pushState = true) {
     const targets = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.nav-links a');
     
+    // Define Home sections that should be visible together
+    const homeSections = ['#hero', '#stats', '#features-highlights'];
+    const isHome = path === '/';
+
     // Hide all
     targets.forEach(s => {
-        s.classList.remove('active');
-        s.style.display = 'none';
-        s.style.opacity = '0';
+        const id = '#' + s.id;
+        if (isHome && homeSections.includes(id)) {
+            s.style.display = 'block';
+            s.classList.add('active');
+            s.style.opacity = '1';
+        } else if (!isHome && id === sectionId) {
+            s.style.display = 'block';
+            s.classList.add('active');
+        } else {
+            s.classList.remove('active');
+            s.style.display = 'none';
+            s.style.opacity = '0';
+        }
     });
     
     // Update Nav Active State
@@ -22,23 +36,18 @@ function navigateTo(path, pushState = true) {
         link.classList.toggle('active', link.getAttribute('href') === path);
     });
     
-    // Show target
-    const targetSection = document.querySelector(sectionId);
+    // Show target for animations
+    const targetSection = document.querySelector(isHome ? '#hero' : sectionId);
     if(targetSection) {
-        targetSection.classList.add('active');
-        targetSection.style.display = 'block';
-        
-        // Trigger Page Animation
-        if (window.animatePageTransition) {
+        // Trigger Page Animation for entry
+        if (window.animatePageTransition && !isHome) {
             window.animatePageTransition(targetSection);
-        } else {
-            targetSection.style.opacity = '1';
         }
         
         window.scrollTo(0, 0);
         
-        // Init logic for specific sections
-        if (sectionId === '#hero' && typeof initAppleHome === 'function') {
+        // Init logic
+        if (isHome && typeof initAppleHome === 'function') {
             initAppleHome();
         }
         if (sectionId === '#restaurants' && typeof initRestaurantExplorer === 'function') {

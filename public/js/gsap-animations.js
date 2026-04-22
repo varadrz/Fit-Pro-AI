@@ -3,35 +3,69 @@ gsap.registerPlugin(ScrollTrigger);
 function initAppleHome() {
     const blocks = gsap.utils.toArray('.feature-block');
     
-    // Hero scaling on scroll
-    gsap.to('.hero-apple', {
+    // Hero reveal sequence
+    const heroTl = gsap.timeline();
+    heroTl.from('.hero-apple h1', { 
+        y: 100, 
+        opacity: 0, 
+        duration: 2, 
+        ease: "expo.out" 
+    })
+    .from('.hero-apple p', { 
+        y: 20, 
+        opacity: 0, 
+        duration: 1.5, 
+        ease: "power2.out" 
+    }, "-=1.2")
+    .from('.hero-apple .btn', { 
+        y: 20, 
+        opacity: 0, 
+        duration: 1, 
+        stagger: 0.2, 
+        ease: "power3.out" 
+    }, "-=1");
+
+    // Parallax scaling for hero background
+    gsap.to('.pinned-bg', {
         scrollTrigger: {
-            trigger: '.hero-apple',
+            trigger: '#hero',
             start: 'top top',
             end: 'bottom top',
             scrub: true
         },
-        scale: 0.9,
-        opacity: 0,
-        filter: 'blur(10px)'
+        scale: 1.3,
+        y: 200,
+        opacity: 0.3
     });
 
-    // Feature block reveals
+    // Advanced Feature Block reveals with Parallax
     blocks.forEach(block => {
         const info = block.querySelector('.feature-info');
         const img = block.querySelector('.feature-image-wrap');
         
-        const tl = gsap.timeline({
+        gsap.from(info, {
             scrollTrigger: {
                 trigger: block,
                 start: 'top 80%',
-                end: 'bottom 20%',
-                toggleActions: 'play reverse play reverse'
-            }
+                toggleActions: 'play none none reverse'
+            },
+            opacity: 0,
+            x: -100,
+            duration: 1.5,
+            ease: "expo.out"
         });
 
-        tl.from(info, { opacity: 0, y: 50, duration: 1, ease: "power3.out" })
-          .from(img, { opacity: 0, scale: 0.8, y: 100, duration: 1.5, ease: "power4.out" }, "-=0.7");
+        gsap.from(img, {
+            scrollTrigger: {
+                trigger: block,
+                start: 'top 80%',
+                scrub: 1
+            },
+            scale: 0.8,
+            rotationY: 15,
+            y: 50,
+            ease: "none"
+        });
     });
 }
 

@@ -131,17 +131,46 @@ nav {
     display: flex; 
     flex-direction: column; 
     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); 
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
     opacity: 1 !important;
+    position: relative;
 }
 
+.menu-card.veg { border-color: rgba(255, 255, 255, 0.15) !important; }
+.menu-card.non-veg { border-color: rgba(255, 255, 255, 0.35) !important; }
+
 .menu-card:hover { 
-    transform: translateY(-10px) scale(1.02); 
-    background: rgba(255, 255, 255, 0.06);
-    border-color: var(--apple-blue);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    transform: translateY(-10px) scale(1.01); 
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255,255,255,0.6) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
+
+.diet-symbol {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 18px;
+    height: 18px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    z-index: 10;
+}
+
+.diet-symbol::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.veg .diet-symbol::after { background: #1a8917; }
+.non-veg .diet-symbol::after { background: #b91d1d; }
 
 .menu-card img { 
     height: 180px; 
@@ -193,6 +222,7 @@ nav {
 .gradient-text {
     background: linear-gradient(135deg, #fff 0%, #86868b 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -501,11 +531,24 @@ nav {
 /* Brand Marquee System */
 .brand-wall {
     background: #000;
-    padding: 60px 0;
+    padding: 80px 0;
     overflow: hidden;
     position: relative;
     border-top: 1px solid rgba(255,255,255,0.03);
     border-bottom: 1px solid rgba(255,255,255,0.03);
+    /* Premium Faded Edges */
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.brand-wall-header {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 40px;
+    text-transform: uppercase;
 }
 
 .brand-wall-inner {
@@ -541,22 +584,25 @@ nav {
 .brand-logo-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    opacity: 0.3;
-    filter: grayscale(1);
-    transition: all 0.4s ease;
-    cursor: default;
+    justify-content: center;
+    opacity: 0.5;
+    /* Monochromatic White Effect for all logo types */
+    filter: brightness(0) invert(1) contrast(1);
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    min-width: 120px;
 }
 
 .brand-logo-item:hover {
     opacity: 1;
-    filter: grayscale(0);
+    filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(255,255,255,0.4));
     transform: scale(1.1);
 }
 
 .brand-logo-item img {
     height: 32px;
     width: auto;
+    max-width: 140px;
     object-fit: contain;
 }
 

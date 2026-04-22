@@ -11,7 +11,7 @@ function navigateTo(path, pushState = true) {
     const navLinks = document.querySelectorAll('.nav-links a');
     
     // Define Home sections that should be visible together
-    const homeSections = ['#hero', '#stats', '#features-highlights'];
+    const homeSections = ['#hero', '#brand-wall', '#stats', '#features-highlights'];
     const isHome = path === '/';
 
     // Hide all
@@ -68,16 +68,17 @@ function navigateTo(path, pushState = true) {
 document.addEventListener('DOMContentLoaded', () => {
     // Intercept clicks
     document.querySelectorAll('a').forEach(link => {
-        if (link.getAttribute('href').startsWith('/')) {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('/')) {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                navigateTo(link.getAttribute('href'));
+                navigateTo(href);
             });
         }
     });
 
     const currentPath = window.location.pathname;
-    navigateTo(currentPath, true);
+    navigateTo(currentPath, false); // Don't pushState on initial load
     
     if(window.initScrollReveals) {
         window.initScrollReveals();

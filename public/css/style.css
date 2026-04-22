@@ -120,15 +120,61 @@ nav {
 
 .menu-container { 
     display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
     gap: 2rem; 
     margin-top: 1rem; 
 }
 
-.menu-item-card { padding: 0 !important; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.menu-item-card:hover { transform: translateY(-8px) scale(1.02); }
-.menu-img { height: 180px; object-fit: cover; }
-.menu-info { padding: 1.5rem; }
+.menu-card { 
+    padding: 0 !important; 
+    overflow: hidden; 
+    display: flex; 
+    flex-direction: column; 
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); 
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    opacity: 1 !important;
+}
+
+.menu-card:hover { 
+    transform: translateY(-10px) scale(1.02); 
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--apple-blue);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.menu-card img { 
+    height: 180px; 
+    width: 100%;
+    object-fit: cover; 
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.menu-card-content { padding: 1.5rem; }
+
+.loader-wrap {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 0;
+    gap: 20px;
+    opacity: 0.7;
+}
+
+.loader {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--apple-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 
 /* Fitness Lab */
 .webcam-container { position: relative; height: 500px; border-radius: 20px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); }
@@ -450,6 +496,81 @@ nav {
 @keyframes slideUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* Brand Marquee System */
+.brand-wall {
+    background: #000;
+    padding: 60px 0;
+    overflow: hidden;
+    position: relative;
+    border-top: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.brand-wall-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.marquee-row {
+    display: flex;
+    gap: 60px;
+    white-space: nowrap;
+}
+
+.marquee-content {
+    display: flex;
+    gap: 60px;
+    animation: marquee 40s linear infinite;
+}
+
+.row-reverse .marquee-content {
+    animation-direction: reverse;
+}
+
+.row-slow .marquee-content {
+    animation-duration: 60s;
+}
+
+.row-fast .marquee-content {
+    animation-duration: 30s;
+}
+
+.brand-logo-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0.3;
+    filter: grayscale(1);
+    transition: all 0.4s ease;
+    cursor: default;
+}
+
+.brand-logo-item:hover {
+    opacity: 1;
+    filter: grayscale(0);
+    transform: scale(1.1);
+}
+
+.brand-logo-item img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+}
+
+.brand-logo-item span {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
 }
 
 .ing-chip {

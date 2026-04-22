@@ -8,13 +8,13 @@ export default defineConfig({
       '/api-indian': {
         target: 'https://indian-food-db.herokuapp.com',
         changeOrigin: true,
-        secure: false, // Heroku might use non-strict SSL for some subdomains
-        rewrite: (path) => path.replace(/^\/api-indian/, '/api'), // Correctly prepends /api
-        configure: (proxy, options) => {
-          proxy.on('error', (err, req, res) => {
-            console.log('[Proxy Error]', err);
-          });
-        }
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api-indian/, '/api')
+      },
+      '/api-mealdb': {
+        target: 'https://www.themealdb.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api-mealdb/, '/api/json/v1/1')
       }
     }
   }

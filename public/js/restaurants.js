@@ -27,29 +27,35 @@ async function fetchDynamicMenu(brandName) {
     return items;
 }
 
-function getDiscoveryImage(foodName, brandName) {
+function getDiscoveryImage(foodName, brandName, archetype) {
     const cleanBrand = (brandName || '').toLowerCase().replace(/['\s]+/g, '');
     const cleanName = foodName.toLowerCase()
         .replace(/synthesis|archetype|pro|supreme|classic|ultra-pure|inferno|thin crust|stuffed crust|feat|artisan|flaky|sliced|protein|thick|crispy|golden|large|half/gi, '')
         .trim().split(' ').slice(0, 3).join(',');
     
-    // Search with both brand and food name for maximum accuracy
-    return `https://loremflickr.com/800/600/food,${cleanBrand},${cleanName}/all`;
+    const tags = ['food'];
+    if (archetype) tags.push(archetype.toLowerCase());
+    tags.push(cleanBrand);
+    tags.push(cleanName);
+    
+    return `https://loremflickr.com/800/600/${tags.join(',')}/all`;
 }
 
 async function fetchIndianDiscovery(brandName) {
+    const brand = restaurantData.find(b => b.restaurant === brandName);
+    const arch = brand ? brand.archetype : "INDIAN";
     const directUrl = `https://www.themealdb.com/api/json/v1/1/filter.php?c=Indian`;
     const proxyUrl = `/api-mealdb/filter.php?c=Indian`; 
     try {
         let resp = await fetch(directUrl).catch(() => fetch(proxyUrl));
         const data = await resp.json();
-        return await processMealResults(data.meals, brandName);
+        return await processMealResults(data.meals, brandName, arch);
     } catch (e) {
-        return generateSyntheticMenu(brandName, "INDIAN");
+        return generateSyntheticMenu(brandName, arch);
     }
 }
 
-async function processMealResults(meals, brandName) {
+async function processMealResults(meals, brandName, archetype) {
     if (!meals) return null;
     const brand = restaurantData.find(b => b.restaurant === brandName);
     const isGlobal = brand && ["BURGER", "CAFE", "PIZZA", "HEALTHY", "FRIED-CHICKEN", "MEXICAN"].includes(brand.archetype);
@@ -57,7 +63,7 @@ async function processMealResults(meals, brandName) {
     return await Promise.all(meals.slice(0, 15).map(async (m) => {
         const name = m.strMeal || m.food_name || "Regional specialty";
         const res = await analyzeFoodLocal(name, { weight_kg: 70 });
-        const finalImage = isGlobal ? getDiscoveryImage(name, brandName) : (m.strMealThumb || getDiscoveryImage(name, brandName));
+        const finalImage = isGlobal ? getDiscoveryImage(name, brandName, archetype) : (m.strMealThumb || getDiscoveryImage(name, brandName, archetype));
 
         return {
             id: Math.random(), name, brand: brandName,
@@ -107,14 +113,20 @@ function generateSyntheticMenu(brandName, archetype) {
             { name: "Artisan Turkey Panini", p: 32, c: 42, f: 12, cal: 410, v: false, cat: "SNACK" }
         ],
         PIZZA: [
-            { name: "Pepperoni Feast Classic", p: 28, c: 68, f: 32, cal: 660, v: false, cat: "PIZZA" },
-            { name: "Margherita Ultra-Pure", p: 18, c: 72, f: 18, cal: 520, v: true, cat: "PIZZA" },
-            { name: "BBQ Chicken Inferno", p: 32, c: 65, f: 24, cal: 610, v: false, cat: "PIZZA" },
-            { name: "Garden Veggie Thin Crust", p: 14, c: 58, f: 12, cal: 390, v: true, cat: "PIZZA" },
-            { name: "Meat Lovers Stuffed Crust", p: 45, c: 75, f: 42, cal: 840, v: false, cat: "PIZZA" },
-            { name: "Buffalo Chicken Wings (6pc)", p: 42, c: 8, f: 28, cal: 440, v: false, cat: "SIDES" },
-            { name: "Garlic Bread with Cheese", p: 8, c: 45, f: 18, cal: 370, v: true, cat: "SIDES" },
-            { name: "Chocolate Lava Cake", p: 6, c: 55, f: 24, cal: 460, v: true, cat: "DESSERT" }
+            { name: "Margherita Pizza", p: 24, c: 88, f: 26, cal: 688, v: true, cat: "PIZZA" },
+            { name: "Cheese n Corn Pizza", p: 24, c: 92, f: 26, cal: 709, v: true, cat: "PIZZA" },
+            { name: "Farm House Pizza", p: 31, c: 92, f: 28, cal: 727, v: true, cat: "PIZZA" },
+            { name: "Veggie Paradise Pizza", p: 27, c: 91, f: 28, cal: 715, v: true, cat: "PIZZA" },
+            { name: "Peppy Paneer Pizza", p: 32, c: 91, f: 39, cal: 857, v: true, cat: "PIZZA" },
+            { name: "Veg Extravaganza Pizza", p: 29, c: 95, f: 32, cal: 789, v: true, cat: "PIZZA" },
+            { name: "Chicken Golden Delight Pizza", p: 37, c: 91, f: 27, cal: 733, v: false, cat: "PIZZA" },
+            { name: "Chicken Dominator Pizza", p: 41, c: 91, f: 32, cal: 801, v: false, cat: "PIZZA" },
+            { name: "Non-Veg Supreme Pizza", p: 36, c: 91, f: 30, cal: 773, v: false, cat: "PIZZA" },
+            { name: "Chicken Pepperoni Pizza", p: 36, c: 89, f: 32, cal: 753, v: false, cat: "PIZZA" },
+            { name: "Garlic Breadsticks", p: 5, c: 34, f: 14, cal: 288, v: true, cat: "SIDES" },
+            { name: "Paneer Tikka Stuffed GB", p: 10, c: 44, f: 23, cal: 429, v: true, cat: "SIDES" },
+            { name: "Choco Lava Cake", p: 6, c: 47, f: 13, cal: 327, v: true, cat: "DESSERT" },
+            { name: "Taco Mexicana - Veg", p: 9, c: 59, f: 25, cal: 496, v: true, cat: "SIDES" }
         ],
         INDIAN: [
             { name: "Paneer Butter Masala", p: 18, c: 12, f: 32, cal: 420, v: true, cat: "CURRY" },
@@ -134,7 +146,7 @@ function generateSyntheticMenu(brandName, archetype) {
         protein_g: item.p, carbs_g: item.c, fats_g: item.f, calories: item.cal,
         type: item.v ? 'veg' : 'non-veg',
         category: item.cat || "REGIONAL",
-        image: getDiscoveryImage(item.name, brandName),
+        image: getDiscoveryImage(item.name, brandName, archetype),
         ingredients: ['Brand Core', 'Regional Base'],
         verified: false
     }));

@@ -74,21 +74,23 @@ async function processMealResults(meals, brandName) {
 function generateSyntheticMenu(brandName, archetype) {
     const templates = {
         BURGER: [
-            { name: "Supreme Quarter Pounder Burger", p: 32, c: 45, f: 28, cal: 540, v: false, cat: "BURGER" },
-            { name: "Big Mac Burger Archetype", p: 26, c: 48, f: 32, cal: 560, v: false, cat: "BURGER" },
-            { name: "Double Cheese Tower Burger", p: 38, c: 50, f: 34, cal: 680, v: false, cat: "BURGER" },
-            { name: "Crispy McChicken Burger", p: 24, c: 42, f: 18, cal: 440, v: false, cat: "BURGER" },
-            { name: "McSpicy Chicken Burger", p: 28, c: 45, f: 22, cal: 510, v: false, cat: "BURGER" },
-            { name: "Filet-O-Fish Burger Pro", p: 18, c: 40, f: 14, cal: 380, v: false, cat: "SANDWICH" },
-            { name: "Golden Chicken Nuggets (9pc)", p: 22, c: 24, f: 24, cal: 410, v: false, cat: "SIDES" },
-            { name: "Large Golden French Fries", p: 4, c: 55, f: 18, cal: 400, v: true, cat: "SIDES" },
-            { name: "Oreo McFlurry Dessert Synthesis", p: 8, c: 65, f: 14, cal: 420, v: true, cat: "DESSERT" },
-            { name: "Vanilla Thick Milk Shake", p: 12, c: 75, f: 16, cal: 480, v: true, cat: "DRINK" },
-            { name: "Egg McMuffin Breakfast", p: 18, c: 32, f: 14, cal: 310, v: false, cat: "BREAKFAST" },
-            { name: "Sausage McMuffin with Egg", p: 22, c: 35, f: 24, cal: 450, v: false, cat: "BREAKFAST" },
-            { name: "Veggie Patty Supreme Burger", p: 15, c: 48, f: 12, cal: 360, v: true, cat: "BURGER" },
-            { name: "Hash Brown Crispy", p: 2, c: 24, f: 12, cal: 210, v: true, cat: "BREAKFAST" },
-            { name: "Apple Pie Dessert", p: 3, c: 44, f: 12, cal: 280, v: true, cat: "DESSERT" }
+            { name: "McAloo Tikki Burger", p: 10, c: 45, f: 13, cal: 339, v: true, cat: "BURGER" },
+            { name: "McChicken Burger", p: 18, c: 42, f: 18, cal: 400, v: false, cat: "BURGER" },
+            { name: "Chicken Maharaja Mac", p: 32, c: 55, f: 38, cal: 689, v: false, cat: "BURGER" },
+            { name: "McSpicy Chicken Burger", p: 24, c: 45, f: 20, cal: 451, v: false, cat: "BURGER" },
+            { name: "McSpicy Paneer Burger", p: 22, c: 52, f: 36, cal: 652, v: true, cat: "BURGER" },
+            { name: "Spicy Paneer Wrap", p: 21, c: 62, f: 38, cal: 674, v: true, cat: "WRAP" },
+            { name: "Spicy Chicken Wrap", p: 28, c: 55, f: 26, cal: 567, v: false, cat: "WRAP" },
+            { name: "Pizza McPuff", p: 6, c: 28, f: 10, cal: 228, v: true, cat: "SNACK" },
+            { name: "World Famous Fries (Medium)", p: 4, c: 42, f: 15, cal: 317, v: true, cat: "SIDES" },
+            { name: "Chicken McNuggets (6pc)", p: 16, c: 18, f: 14, cal: 254, v: false, cat: "SIDES" },
+            { name: "Butter Paneer Grilled Burger", p: 15, c: 40, f: 18, cal: 382, v: true, cat: "BURGER" },
+            { name: "Veg Surprise Burger", p: 11, c: 38, f: 13, cal: 313, v: true, cat: "BURGER" },
+            { name: "Chicken Surprise Burger", p: 15, c: 35, f: 11, cal: 293, v: false, cat: "BURGER" },
+            { name: "McVeggie Burger", p: 12, c: 48, f: 18, cal: 402, v: true, cat: "BURGER" },
+            { name: "Cold Coffee", p: 6, c: 45, f: 11, cal: 301, v: true, cat: "DRINK" },
+            { name: "Black Coffee", p: 0, c: 1, f: 0, cal: 6, v: true, cat: "DRINK" },
+            { name: "Masala Chai", p: 2, c: 15, f: 3, cal: 94, v: true, cat: "DRINK" }
         ],
         CAFE: [
             { name: "Caramel Latte Macchiato", p: 8, c: 35, f: 12, cal: 280, v: true, cat: "DRINK" },

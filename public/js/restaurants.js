@@ -2,13 +2,13 @@ import { analyzeFoodLocal } from './ai-engine.js';
 
 const menuCache = {};
 const restaurantData = [
-    { id: 1, restaurant: "McDonald's", logo: "https://www.google.com/s2/favicons?domain=mcdonalds.com&sz=128", archetype: "BURGER", tags: ["fast-food", "non-veg"] },
+    { id: 1, restaurant: "McDonald's", logo: "https://www.google.com/s2/favicons?domain=mcdonalds.com&sz=128", archetype: "MCDONALDS", tags: ["fast-food", "non-veg"] },
     { id: 2, restaurant: "Starbucks", logo: "https://www.google.com/s2/favicons?domain=starbucks.com&sz=128", archetype: "CAFE", tags: ["cafe", "veg"] },
     { id: 3, restaurant: "Subway", logo: "https://www.google.com/s2/favicons?domain=subway.com&sz=128", archetype: "HEALTHY", tags: ["healthy", "veg"] },
     { id: 4, restaurant: "KFC", logo: "https://www.google.com/s2/favicons?domain=kfc.com&sz=128", archetype: "FRIED-CHICKEN", tags: ["fast-food", "non-veg"] },
     { id: 5, restaurant: "Pizza Hut", logo: "https://www.google.com/s2/favicons?domain=pizzahut.com&sz=128", archetype: "PIZZA", tags: ["pizza", "veg"] },
     { id: 6, restaurant: "Chipotle", logo: "https://www.google.com/s2/favicons?domain=chipotle.com&sz=128", archetype: "MEXICAN", tags: ["mexican", "non-veg"] },
-    { id: 7, restaurant: "Burger King", logo: "https://www.google.com/s2/favicons?domain=burgerking.com&sz=128", archetype: "BURGER", tags: ["fast-food", "non-veg"] },
+    { id: 7, restaurant: "Burger King", logo: "https://www.google.com/s2/favicons?domain=burgerking.com&sz=128", archetype: "BURGER_KING", tags: ["fast-food", "non-veg"] },
     { id: 8, restaurant: "Taco Bell", logo: "https://www.google.com/s2/favicons?domain=tacobell.com&sz=128", archetype: "MEXICAN", tags: ["mexican", "non-veg"] },
     { id: 10, restaurant: "Blue Tokai", logo: "https://www.google.com/s2/favicons?domain=bluetokaicoffee.com&sz=128", archetype: "CAFE", tags: ["cafe", "veg"] },
     { id: 11, restaurant: "Haldiram's", logo: "https://www.google.com/s2/favicons?domain=haldirams.com&sz=128", archetype: "INDIAN", tags: ["indian", "veg"] }
@@ -79,7 +79,7 @@ async function processMealResults(meals, brandName, archetype) {
 
 function generateSyntheticMenu(brandName, archetype) {
     const templates = {
-        BURGER: [
+        MCDONALDS: [
             { name: "McAloo Tikki Burger", p: 10, c: 45, f: 13, cal: 339, v: true, cat: "BURGER" },
             { name: "McChicken Burger", p: 18, c: 42, f: 18, cal: 400, v: false, cat: "BURGER" },
             { name: "Chicken Maharaja Mac", p: 32, c: 55, f: 38, cal: 689, v: false, cat: "BURGER" },
@@ -90,13 +90,21 @@ function generateSyntheticMenu(brandName, archetype) {
             { name: "Pizza McPuff", p: 6, c: 28, f: 10, cal: 228, v: true, cat: "SNACK" },
             { name: "World Famous Fries (Medium)", p: 4, c: 42, f: 15, cal: 317, v: true, cat: "SIDES" },
             { name: "Chicken McNuggets (6pc)", p: 16, c: 18, f: 14, cal: 254, v: false, cat: "SIDES" },
-            { name: "Butter Paneer Grilled Burger", p: 15, c: 40, f: 18, cal: 382, v: true, cat: "BURGER" },
-            { name: "Veg Surprise Burger", p: 11, c: 38, f: 13, cal: 313, v: true, cat: "BURGER" },
-            { name: "Chicken Surprise Burger", p: 15, c: 35, f: 11, cal: 293, v: false, cat: "BURGER" },
-            { name: "McVeggie Burger", p: 12, c: 48, f: 18, cal: 402, v: true, cat: "BURGER" },
             { name: "Cold Coffee", p: 6, c: 45, f: 11, cal: 301, v: true, cat: "DRINK" },
-            { name: "Black Coffee", p: 0, c: 1, f: 0, cal: 6, v: true, cat: "DRINK" },
             { name: "Masala Chai", p: 2, c: 15, f: 3, cal: 94, v: true, cat: "DRINK" }
+        ],
+        BURGER_KING: [
+            { name: "Veg Whopper", p: 22, c: 72, f: 34, cal: 682, v: true, cat: "BURGER" },
+            { name: "Chicken Whopper", p: 32, c: 48, f: 38, cal: 667, v: false, cat: "BURGER" },
+            { name: "Crispy Veg Burger", p: 10, c: 45, f: 14, cal: 362, v: true, cat: "BURGER" },
+            { name: "Crispy Chicken Burger", p: 18, c: 42, f: 18, cal: 359, v: false, cat: "BURGER" },
+            { name: "Paneer Royale Burger", p: 18, c: 42, f: 35, cal: 558, v: true, cat: "BURGER" },
+            { name: "Fiery Chicken Burger", p: 26, c: 48, f: 32, cal: 588, v: false, cat: "BURGER" },
+            { name: "Paneer Royale Wrap", p: 21, c: 68, f: 35, cal: 676, v: true, cat: "WRAP" },
+            { name: "Chicken Wings Fried (4pcs)", p: 24, c: 4, f: 20, cal: 300, v: false, cat: "SIDES" },
+            { name: "Peri Peri Fries Medium", p: 4, c: 45, f: 15, cal: 333, v: true, cat: "SIDES" },
+            { name: "Classic Cold Coffee", p: 5, c: 30, f: 8, cal: 215, v: true, cat: "DRINK" },
+            { name: "Vanilla Softie", p: 3, c: 20, f: 3, cal: 115, v: true, cat: "DESSERT" }
         ],
         CAFE: [
             { name: "Caramel Latte Macchiato", p: 8, c: 35, f: 12, cal: 280, v: true, cat: "DRINK" },

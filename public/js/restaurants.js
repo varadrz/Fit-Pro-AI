@@ -27,13 +27,14 @@ async function fetchDynamicMenu(brandName) {
     return items;
 }
 
-function getDiscoveryImage(foodName) {
+function getDiscoveryImage(foodName, brandName) {
+    const cleanBrand = (brandName || '').toLowerCase().replace(/['\s]+/g, '');
     const cleanName = foodName.toLowerCase()
         .replace(/synthesis|archetype|pro|supreme|classic|ultra-pure|inferno|thin crust|stuffed crust|feat|artisan|flaky|sliced|protein|thick|crispy|golden|large|half/gi, '')
         .trim().split(' ').slice(0, 3).join(',');
     
-    // Using LoremFlickr for highly specific keyword-based food images
-    return `https://loremflickr.com/800/600/food,${cleanName}/all`;
+    // Search with both brand and food name for maximum accuracy
+    return `https://loremflickr.com/800/600/food,${cleanBrand},${cleanName}/all`;
 }
 
 async function fetchIndianDiscovery(brandName) {
@@ -56,7 +57,7 @@ async function processMealResults(meals, brandName) {
     return await Promise.all(meals.slice(0, 15).map(async (m) => {
         const name = m.strMeal || m.food_name || "Regional specialty";
         const res = await analyzeFoodLocal(name, { weight_kg: 70 });
-        const finalImage = isGlobal ? getDiscoveryImage(name) : (m.strMealThumb || getDiscoveryImage(name));
+        const finalImage = isGlobal ? getDiscoveryImage(name, brandName) : (m.strMealThumb || getDiscoveryImage(name, brandName));
 
         return {
             id: Math.random(), name, brand: brandName,
@@ -131,7 +132,7 @@ function generateSyntheticMenu(brandName, archetype) {
         protein_g: item.p, carbs_g: item.c, fats_g: item.f, calories: item.cal,
         type: item.v ? 'veg' : 'non-veg',
         category: item.cat || "REGIONAL",
-        image: getDiscoveryImage(item.name),
+        image: getDiscoveryImage(item.name, brandName),
         ingredients: ['Brand Core', 'Regional Base'],
         verified: false
     }));

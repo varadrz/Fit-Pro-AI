@@ -28,31 +28,12 @@ async function fetchDynamicMenu(brandName) {
 }
 
 function getDiscoveryImage(foodName) {
-    const query = foodName.toLowerCase();
-    const map = {
-        'burger': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add',
-        'pizza': 'https://images.unsplash.com/photo-1513104890138-7c749659a591',
-        'taco': 'https://images.unsplash.com/photo-1552332386-f8dd00dc2f85',
-        'burrito': 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f',
-        'sandwich': 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af',
-        'sub': 'https://images.unsplash.com/photo-1553909489-cd47e0907980',
-        'wrap': 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f',
-        'fries': 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877',
-        'toast': 'https://images.unsplash.com/photo-1525351484163-7529414344d8',
-        'muffin': 'https://images.unsplash.com/photo-1558401391-7899b4bd5bbf',
-        'steak': 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092',
-        'coffee': 'https://images.unsplash.com/photo-1541167760496-1628856ab752',
-        'nuggets': 'https://images.unsplash.com/photo-1562967914-608f82629710',
-        'shake': 'https://images.unsplash.com/photo-1572490122747-3968b75cc699',
-        'salad': 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd',
-        'paneer': 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7',
-        'tikka': 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0',
-        'biryani': 'https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8',
-        'dal': 'https://images.unsplash.com/photo-1546833999-b9f581a1996d',
-        'dosa': 'https://images.unsplash.com/photo-1541014741259-de529411b96a'
-    };
-    const key = Object.keys(map).find(k => query.includes(k));
-    return (map[key] || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c') + '?auto=format&fit=crop&w=1200&q=95';
+    const cleanName = foodName.toLowerCase()
+        .replace(/synthesis|archetype|pro|supreme|classic|ultra-pure|inferno|thin crust|stuffed crust|feat|artisan|flaky|sliced|protein|thick|crispy|golden|large|half/gi, '')
+        .trim().split(' ').slice(0, 3).join(',');
+    
+    // Using LoremFlickr for highly specific keyword-based food images
+    return `https://loremflickr.com/800/600/food,${cleanName}/all`;
 }
 
 async function fetchIndianDiscovery(brandName) {

@@ -1,6 +1,6 @@
-# Vitality AI | Predictive Metabolic & Biomechanical Intelligence 
+# RestroBoom AI | Predictive Metabolic & Biomechanical Intelligence 
 
-A premium, high-precision Health & Fitness intelligence platform. Built with a cinematic Apple-inspired design language, Vitality AI synthesizes natural language dietary intake and real-time biomechanical data into actionable performance insights.
+A premium, high-precision Health & Fitness intelligence platform. Built with a cinematic Apple-inspired design language, RestroBoom AI synthesizes natural language dietary intake and real-time biomechanical data into actionable performance insights.
 
 ##  Design & Impact Philosophy
 - **High-Precision Minimalism**: A high-contrast, elite interface focusing on single-column clarity and predictive data visualization.
@@ -20,7 +20,7 @@ A premium, high-precision Health & Fitness intelligence platform. Built with a c
 - **Macro-Compliance Filtering**: Locate outlets by Net Carbs, High-Protein, or Plant-Based profiles.
 
 ### 3. Fitness Lab (Biomechanical Lab)
-- **Neural Posture Tracking**: Real-time biometric feedback via the Vitality Vision engine (MediaPipe).
+- **Neural Posture Tracking**: Real-time biometric feedback via the RestroBoom Vision engine (MediaPipe).
 - **Performance Posture Engine**: Specialized tracking for Sagittal Squats, Structural Pushups, and Axial Rotation.
 
 ### 4. Integrated Ecosystem & Trust
@@ -59,4 +59,4 @@ The application will be live at `http://localhost:3000/`.
 This repository is optimized for **Google Cloud Platform (Cloud Run)** with a built-in Docker configuration for low-latency global delivery.
 
 ---
-*Vitality AI is a demonstration of high-performance health intelligence. Always consult a medical professional for health advice.*
+*RestroBoom AI is a demonstration of high-performance health intelligence. Always consult a medical professional for health advice.*

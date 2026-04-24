@@ -27,18 +27,23 @@ async function fetchDynamicMenu(brandName) {
     return items;
 }
 
+const archetypeToUnsplash = {
+    MCDONALDS: '1571091718767-18b5b1457add',
+    BURGER_KING: '1561758033-d89a9ad46330',
+    PIZZA: '1513104890138-7c749659a591',
+    CAFE: '1541167760496-1628856ab752',
+    INDIAN: '1631452180519-c014fe946bc7',
+    HEALTHY: '1546069901-ba9599a7e63c',
+    WRAP: '1626700051175-6818013e1d4f',
+    SIDES: '1573080496219-bb080dd4f877',
+    DRINK: '1544145945-f904253db0ad',
+    DESSERT: '1563729784-498ae8d2a215'
+};
+
 function getDiscoveryImage(foodName, brandName, archetype) {
-    const cleanBrand = (brandName || '').toLowerCase().replace(/['\s]+/g, '');
-    const cleanName = foodName.toLowerCase()
-        .replace(/synthesis|archetype|pro|supreme|classic|ultra-pure|inferno|thin crust|stuffed crust|feat|artisan|flaky|sliced|protein|thick|crispy|golden|large|half/gi, '')
-        .trim().split(' ').slice(0, 3).join(',');
-    
-    const tags = ['food'];
-    if (archetype) tags.push(archetype.toLowerCase());
-    tags.push(cleanBrand);
-    tags.push(cleanName);
-    
-    return `https://loremflickr.com/800/600/${tags.join(',')}/all`;
+    // 100% Guaranteed Food Images from Curated Unsplash IDs
+    const id = archetypeToUnsplash[brandName] || archetypeToUnsplash[archetype] || archetypeToUnsplash.INDIAN;
+    return `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=800&q=80`;
 }
 
 async function fetchIndianDiscovery(brandName) {
@@ -80,7 +85,7 @@ async function processMealResults(meals, brandName, archetype) {
 function generateSyntheticMenu(brandName, archetype) {
     const templates = {
         MCDONALDS: [
-            { name: "McAloo Tikki Burger", p: 10, c: 45, f: 13, cal: 339, v: true, cat: "BURGER" },
+            { name: "McAloo Tikki Burger", p: 10, c: 45, f: 13, cal: 339, v: true, cat: "BURGER", img: "https://veganfirst.com/media/editorimages/tikki.jpg" },
             { name: "McChicken Burger", p: 18, c: 42, f: 18, cal: 400, v: false, cat: "BURGER" },
             { name: "Chicken Maharaja Mac", p: 32, c: 55, f: 38, cal: 689, v: false, cat: "BURGER" },
             { name: "McSpicy Chicken Burger", p: 24, c: 45, f: 20, cal: 451, v: false, cat: "BURGER" },
@@ -154,7 +159,7 @@ function generateSyntheticMenu(brandName, archetype) {
         protein_g: item.p, carbs_g: item.c, fats_g: item.f, calories: item.cal,
         type: item.v ? 'veg' : 'non-veg',
         category: item.cat || "REGIONAL",
-        image: getDiscoveryImage(item.name, brandName, archetype),
+        image: item.img || getDiscoveryImage(item.name, brandName, archetype),
         ingredients: ['Brand Core', 'Regional Base'],
         verified: false
     }));
@@ -186,6 +191,14 @@ function showDishDetail(dish) {
 
     ingList.innerHTML = dish.ingredients.map(i => `<span class="ing-chip">${i}</span>`).join("");
     modal.style.display = "flex";
+    
+    // GSAP Reveal for premium feel
+    if (window.gsap) {
+        gsap.fromTo(".modal-content", 
+            { opacity: 0, y: 50 }, 
+            { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }
+        );
+    }
 
     const ctx = document.getElementById('detailChart').getContext('2d');
     if (window.detailChart) window.detailChart.destroy();
@@ -204,15 +217,28 @@ function showDishDetail(dish) {
 
     const slugify = (t) => t.toLowerCase().trim().replace(/\s+/g,'-').replace(/[^\w-]+/g,'');
     window.history.pushState({}, '', `/restaurant-lab/${slugify(dish.brand)}/${slugify(dish.name)}`);
-    document.querySelector("#close-modal").onclick = () => {
-        modal.style.display = "none";
-        window.history.pushState({}, '', '/restaurant-lab');
-    };
 }
 
 function initRestaurantExplorer() {
     const list = document.querySelector("#brand-list");
     const menuContainer = document.querySelector("#menu-container");
+    const modal = document.querySelector("#dish-modal");
+    const closeBtn = document.querySelector("#close-modal");
+
+    // Modal Close Logic - Set once for reliability
+    if (modal && closeBtn) {
+        const closeModal = () => {
+            modal.style.display = "none";
+            window.history.pushState({}, '', '/restaurant-lab');
+        };
+
+        closeBtn.onclick = closeModal;
+        modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+        
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
+        });
+    }
     const filters = document.querySelectorAll(".filter-btn");
 
     let currF = "all", sel = null;
@@ -246,14 +272,17 @@ function initRestaurantExplorer() {
              return;
         }
 
+        const isVegOnly = document.querySelector("#diet-switch").checked;
         const filtered = items.filter(i => {
-            if (currF === "all") return true;
-            if (currF === "high-protein") return i.protein_g > 20;
-            if (currF === "low-carbs") return i.carbs_g < 20;
-            if (currF === "low-calories") return i.calories < 400;
-            if (currF === "veg") return i.type === 'veg';
-            if (currF === "non-veg") return i.type === 'non-veg';
-            return true;
+            let passMacro = true;
+            if (currF === "high-protein") passMacro = i.protein_g > 20;
+            else if (currF === "low-carbs") passMacro = i.carbs_g < 20;
+            else if (currF === "low-calories") passMacro = i.calories < 400;
+
+            let passDiet = true;
+            if (isVegOnly) passDiet = i.type === 'veg';
+
+            return passMacro && passDiet;
         });
 
         filtered.forEach(item => {
@@ -285,6 +314,9 @@ function initRestaurantExplorer() {
     }
 
     document.querySelector("#res-search").oninput = (e) => renderB(e.target.value);
+    document.querySelector("#diet-switch").onchange = () => {
+        if (sel) fetchDynamicMenu(sel).then(renderM);
+    };
     
     filters.forEach(f => {
         f.onclick = () => {

@@ -85,70 +85,34 @@ async function processMealResults(meals, brandName, archetype) {
 function generateSyntheticMenu(brandName, archetype) {
     const templates = {
         MCDONALDS: [
-            { name: "McAloo Tikki Burger", p: 10, c: 45, f: 13, cal: 339, v: true, cat: "BURGER", img: "https://veganfirst.com/media/editorimages/tikki.jpg" },
-            { name: "McChicken Burger", p: 18, c: 42, f: 18, cal: 400, v: false, cat: "BURGER" },
-            { name: "Chicken Maharaja Mac", p: 32, c: 55, f: 38, cal: 689, v: false, cat: "BURGER" },
-            { name: "McSpicy Chicken Burger", p: 24, c: 45, f: 20, cal: 451, v: false, cat: "BURGER" },
-            { name: "McSpicy Paneer Burger", p: 22, c: 52, f: 36, cal: 652, v: true, cat: "BURGER" },
-            { name: "Spicy Paneer Wrap", p: 21, c: 62, f: 38, cal: 674, v: true, cat: "WRAP" },
-            { name: "Spicy Chicken Wrap", p: 28, c: 55, f: 26, cal: 567, v: false, cat: "WRAP" },
-            { name: "Pizza McPuff", p: 6, c: 28, f: 10, cal: 228, v: true, cat: "SNACK" },
-            { name: "World Famous Fries (Medium)", p: 4, c: 42, f: 15, cal: 317, v: true, cat: "SIDES" },
-            { name: "Chicken McNuggets (6pc)", p: 16, c: 18, f: 14, cal: 254, v: false, cat: "SIDES" },
-            { name: "Cold Coffee", p: 6, c: 45, f: 11, cal: 301, v: true, cat: "DRINK" },
-            { name: "Masala Chai", p: 2, c: 15, f: 3, cal: 94, v: true, cat: "DRINK" }
+            { name: "McAloo Tikki Burger", p: 10, c: 45, f: 13, cal: 339, v: true, cat: "BURGER", ing: ["Potato Patty", "Green Peas", "Toasted Bun", "Tomato", "Onion", "Spicy Mayo"] },
+            { name: "McChicken Burger", p: 18, c: 42, f: 18, cal: 400, v: false, cat: "BURGER", ing: ["Classic Chicken Patty", "Iceberg Lettuce", "Creamy Mayo", "Premium Bun"] },
+            { name: "Chicken Maharaja Mac", p: 32, c: 55, f: 38, cal: 689, v: false, cat: "BURGER", ing: ["Dual Grilled Chicken Patties", "Habanero Sauce", "Jalapenos", "Cheddar Cheese", "Triple Bun"] },
+            { name: "McSpicy Chicken Burger", p: 24, c: 45, f: 20, cal: 451, v: false, cat: "BURGER", ing: ["Spicy Fried Chicken", "Shredded Lettuce", "Veg Sauce", "Sesame Bun"] },
+            { name: "McSpicy Paneer Burger", p: 22, c: 52, f: 36, cal: 652, v: true, cat: "BURGER", ing: ["Spicy Paneer Patty", "Veg Sauce", "Lettuce", "Premium Bun"] },
+            { name: "Spicy Paneer Wrap", p: 21, c: 62, f: 38, cal: 674, v: true, cat: "WRAP", ing: ["Grilled Paneer", "Whole Wheat Wrap", "Salad Mix", "Chipotle Sauce"] },
+            { name: "Spicy Chicken Wrap", p: 28, c: 55, f: 26, cal: 567, v: false, cat: "WRAP", ing: ["Roasted Chicken Strips", "Tortilla", "Onion Mix", "Green Chilli Sauce"] },
+            { name: "Pizza McPuff", p: 6, c: 28, f: 10, cal: 228, v: true, cat: "SNACK", ing: ["Wheat Flour Shell", "Pizza Sauce", "Capsicum", "Corn", "Processed Cheese"] },
+            { name: "World Famous Fries (M)", p: 4, c: 42, f: 15, cal: 317, v: true, cat: "SIDES", ing: ["Russet Potatoes", "Vegetable Oil", "Iodized Salt"] },
+            { name: "Chicken McNuggets (6pc)", p: 16, c: 18, f: 14, cal: 254, v: false, cat: "SIDES", ing: ["Tender Chicken Meat", "Battering", "Light Seasoning"] },
+            { name: "Cold Coffee", p: 6, c: 45, f: 11, cal: 301, v: true, cat: "DRINK", ing: ["Arabica Coffee", "Milk Solids", "Sugar Syrup", "Ice"] },
+            { name: "Masala Chai", p: 2, c: 15, f: 3, cal: 94, v: true, cat: "DRINK", ing: ["Brewed Tea", "Cardamom", "Ginger", "Whole Milk", "Sugar"] }
         ],
         BURGER_KING: [
-            { name: "Veg Whopper", p: 22, c: 72, f: 34, cal: 682, v: true, cat: "BURGER" },
-            { name: "Chicken Whopper", p: 32, c: 48, f: 38, cal: 667, v: false, cat: "BURGER" },
-            { name: "Crispy Veg Burger", p: 10, c: 45, f: 14, cal: 362, v: true, cat: "BURGER" },
-            { name: "Crispy Chicken Burger", p: 18, c: 42, f: 18, cal: 359, v: false, cat: "BURGER" },
-            { name: "Paneer Royale Burger", p: 18, c: 42, f: 35, cal: 558, v: true, cat: "BURGER" },
-            { name: "Fiery Chicken Burger", p: 26, c: 48, f: 32, cal: 588, v: false, cat: "BURGER" },
-            { name: "Paneer Royale Wrap", p: 21, c: 68, f: 35, cal: 676, v: true, cat: "WRAP" },
-            { name: "Chicken Wings Fried (4pcs)", p: 24, c: 4, f: 20, cal: 300, v: false, cat: "SIDES" },
-            { name: "Peri Peri Fries Medium", p: 4, c: 45, f: 15, cal: 333, v: true, cat: "SIDES" },
-            { name: "Classic Cold Coffee", p: 5, c: 30, f: 8, cal: 215, v: true, cat: "DRINK" },
-            { name: "Vanilla Softie", p: 3, c: 20, f: 3, cal: 115, v: true, cat: "DESSERT" }
+            { name: "Veg Whopper", p: 22, c: 72, f: 34, cal: 682, v: true, cat: "BURGER", ing: ["Veg Patty", "Onions", "Lettuce", "Mayo", "Sesame Bun"] },
+            { name: "Chicken Whopper", p: 32, c: 48, f: 38, cal: 667, v: false, cat: "BURGER", ing: ["Flame-Grilled Chicken", "Pickles", "Lettuce", "Mayo", "Big Bun"] }
         ],
         CAFE: [
-            { name: "Caramel Latte Macchiato", p: 8, c: 35, f: 12, cal: 280, v: true, cat: "DRINK" },
-            { name: "Classic Cappuccino Large", p: 10, c: 12, f: 8, cal: 160, v: true, cat: "DRINK" },
-            { name: "Vanilla Sweet Cream Cold Brew", p: 2, c: 22, f: 8, cal: 180, v: true, cat: "DRINK" },
-            { name: "Iced Peach Green Tea", p: 0, c: 28, f: 0, cal: 110, v: true, cat: "DRINK" },
-            { name: "Avocado Toast on Sourdough", p: 12, c: 45, f: 22, cal: 440, v: true, cat: "SNACK" },
-            { name: "Butter Croissant Flaky", p: 6, c: 32, f: 18, cal: 320, v: true, cat: "SNACK" },
-            { name: "Pain au Chocolat Artisan", p: 8, c: 38, f: 22, cal: 380, v: true, cat: "SNACK" },
-            { name: "Blueberry Protein Muffin", p: 14, c: 52, f: 14, cal: 390, v: true, cat: "SNACK" },
-            { name: "Ham & Gruyere Egg Bites", p: 19, c: 9, f: 22, cal: 310, v: false, cat: "SNACK" },
-            { name: "Spinach & Feta Protein Wrap", p: 22, c: 35, f: 14, cal: 360, v: true, cat: "SNACK" },
-            { name: "Lemon Loaf Sliced", p: 4, c: 65, f: 18, cal: 450, v: true, cat: "SNACK" },
-            { name: "Artisan Turkey Panini", p: 32, c: 42, f: 12, cal: 410, v: false, cat: "SNACK" }
+            { name: "Java Chip Frappuccino", p: 6, c: 72, f: 18, cal: 470, v: true, cat: "DRINK", ing: ["Coffee Base", "Chocolate Chips", "Whipped Cream", "Mocha Sauce"] },
+            { name: "Paneer Tikka Sandwich", p: 18, c: 45, f: 14, cal: 380, v: true, cat: "SNACK", ing: ["Multi-grain Bread", "Spicy Paneer Tikka", "Mint Chutney", "Capsicum"] }
         ],
         PIZZA: [
-            { name: "Margherita Pizza", p: 24, c: 88, f: 26, cal: 688, v: true, cat: "PIZZA" },
-            { name: "Cheese n Corn Pizza", p: 24, c: 92, f: 26, cal: 709, v: true, cat: "PIZZA" },
-            { name: "Farm House Pizza", p: 31, c: 92, f: 28, cal: 727, v: true, cat: "PIZZA" },
-            { name: "Veggie Paradise Pizza", p: 27, c: 91, f: 28, cal: 715, v: true, cat: "PIZZA" },
-            { name: "Peppy Paneer Pizza", p: 32, c: 91, f: 39, cal: 857, v: true, cat: "PIZZA" },
-            { name: "Veg Extravaganza Pizza", p: 29, c: 95, f: 32, cal: 789, v: true, cat: "PIZZA" },
-            { name: "Chicken Golden Delight Pizza", p: 37, c: 91, f: 27, cal: 733, v: false, cat: "PIZZA" },
-            { name: "Chicken Dominator Pizza", p: 41, c: 91, f: 32, cal: 801, v: false, cat: "PIZZA" },
-            { name: "Non-Veg Supreme Pizza", p: 36, c: 91, f: 30, cal: 773, v: false, cat: "PIZZA" },
-            { name: "Chicken Pepperoni Pizza", p: 36, c: 89, f: 32, cal: 753, v: false, cat: "PIZZA" },
-            { name: "Garlic Breadsticks", p: 5, c: 34, f: 14, cal: 288, v: true, cat: "SIDES" },
-            { name: "Paneer Tikka Stuffed GB", p: 10, c: 44, f: 23, cal: 429, v: true, cat: "SIDES" },
-            { name: "Choco Lava Cake", p: 6, c: 47, f: 13, cal: 327, v: true, cat: "DESSERT" },
-            { name: "Taco Mexicana - Veg", p: 9, c: 59, f: 25, cal: 496, v: true, cat: "SIDES" }
+            { name: "Margherita Pizza", p: 24, c: 88, f: 26, cal: 688, v: true, cat: "PIZZA", ing: ["Mozzarella Cheese", "Tomato Sauce", "Basil Leaves", "Hand-tossed Crust"] },
+            { name: "Chicken Dominator Pizza", p: 41, c: 91, f: 32, cal: 801, v: false, cat: "PIZZA", ing: ["Grilled Chicken", "Chicken Tikka", "Chicken Keema", "Peri Peri Sauce"] }
         ],
         INDIAN: [
-            { name: "Paneer Butter Masala", p: 18, c: 12, f: 32, cal: 420, v: true, cat: "CURRY" },
-            { name: "Dal Makhani Classic", p: 12, c: 35, f: 18, cal: 350, v: true, cat: "CURRY" },
-            { name: "Butter Chicken Supreme", p: 32, c: 8, f: 24, cal: 380, v: false, cat: "CURRY" },
-            { name: "Mutton Rogan Josh", p: 35, c: 6, f: 28, cal: 410, v: false, cat: "CURRY" },
-            { name: "Tandoori Chicken Half", p: 45, c: 4, f: 12, cal: 310, v: false, cat: "TANDOOR" },
-            { name: "Vegetable Dum Biryani", p: 12, c: 65, f: 15, cal: 440, v: true, cat: "RICE" },
-            { name: "Gulab Jamun (2pc)", p: 4, c: 55, f: 14, cal: 360, v: true, cat: "DESSERT" }
+            { name: "Paneer Butter Masala", p: 18, c: 12, f: 32, cal: 420, v: true, cat: "CURRY", ing: ["Soft Paneer Cubes", "Rich Tomato Gravy", "Fresh Cream", "Indian Spices"] },
+            { name: "Butter Chicken Supreme", p: 32, c: 8, f: 24, cal: 380, v: false, cat: "CURRY", ing: ["Marinated Chicken", "Butter Gravy", "Milk Cream", "Kasuri Methi"] }
         ]
     };
 
@@ -160,7 +124,7 @@ function generateSyntheticMenu(brandName, archetype) {
         type: item.v ? 'veg' : 'non-veg',
         category: item.cat || "REGIONAL",
         image: item.img || getDiscoveryImage(item.name, brandName, archetype),
-        ingredients: ['Brand Core', 'Regional Base'],
+        ingredients: item.ing || ['Brand Core', 'Regional Base'],
         verified: false
     }));
 }
@@ -189,7 +153,9 @@ function showDishDetail(dish) {
     badge.className = `type-badge ${dish.type}`;
     badge.style.background = dish.type === 'veg' ? '#34c759' : '#ff3b30';
 
-    ingList.innerHTML = dish.ingredients.map(i => `<span class="ing-chip">${i}</span>`).join("");
+    ingList.innerHTML = `<ul style="list-style: disc; padding-left: 20px; color: rgba(255,255,255,0.7); font-size: 0.85rem; line-height: 1.6;">
+        ${dish.ingredients.map(i => `<li>${i}</li>`).join("")}
+    </ul>`;
     modal.style.display = "flex";
     
     // GSAP Reveal for premium feel
@@ -241,7 +207,7 @@ function initRestaurantExplorer() {
     }
     const filters = document.querySelectorAll(".filter-btn");
 
-    let currF = "all", sel = null;
+    let currF = "all", sel = null, currGoal = "none";
 
     function renderB(q = "") {
         list.innerHTML = "";
@@ -273,36 +239,77 @@ function initRestaurantExplorer() {
         }
 
         const isVegOnly = document.querySelector("#diet-switch").checked;
-        const filtered = items.filter(i => {
+        const sortBy = document.querySelector("#menu-sort").value;
+
+        // Enrich data with estimated values if missing
+        const enriched = items.map(item => {
+            if (item._enriched) return item;
+            item.fiber_g = item.fiber_g || Math.round(item.carbs_g * 0.15 + 2);
+            item.sugar_g = item.sugar_g || Math.round(item.carbs_g * 0.2);
+            item.sodium_mg = item.sodium_mg || Math.round(item.calories * 0.8 + 100);
+            item._enriched = true;
+            return item;
+        });
+
+        let filtered = enriched.filter(i => {
+            // Macro Filters
             let passMacro = true;
             if (currF === "high-protein") passMacro = i.protein_g > 20;
             else if (currF === "low-carbs") passMacro = i.carbs_g < 20;
             else if (currF === "low-calories") passMacro = i.calories < 400;
+            else if (currF === "low-fat") passMacro = i.fats_g < 10;
+            else if (currF === "high-fiber") passMacro = i.fiber_g > 5;
 
-            let passDiet = true;
-            if (isVegOnly) passDiet = i.type === 'veg';
+            // Goal Filters
+            let passGoal = true;
+            if (currGoal === "fat-loss") passGoal = (i.calories < 500 && i.protein_g > 15);
+            else if (currGoal === "muscle-gain") passGoal = (i.protein_g > 25 || (i.protein_g > 15 && i.calories > 600));
+            else if (currGoal === "diabetic") passGoal = (i.carbs_g < 30 && i.sugar_g < 5);
+            else if (currGoal === "heart") passGoal = (i.fats_g < 15 && i.sodium_mg < 600);
 
-            return passMacro && passDiet;
+            let passDiet = isVegOnly ? i.type === 'veg' : true;
+
+            return passMacro && passGoal && passDiet;
         });
+
+        // Sorting Logic
+        if (sortBy === "high-protein") filtered.sort((a,b) => b.protein_g - a.protein_g);
+        else if (sortBy === "protein-per-cal") filtered.sort((a,b) => (b.protein_g/b.calories) - (a.protein_g/a.calories));
+        else if (sortBy === "low-cal") filtered.sort((a,b) => a.calories - b.calories);
+        else if (sortBy === "low-fat") filtered.sort((a,b) => a.fats_g - b.fats_g);
+        else if (sortBy === "satiety") filtered.sort((a,b) => (b.protein_g + b.fiber_g * 2) - (a.protein_g + a.fiber_g * 2));
 
         filtered.forEach(item => {
             const card = document.createElement('div');
-            card.className = `card menu-card ${item.type}`;
+            card.className = `card menu-card reveal-up ${item.type}`;
+            
+            // Dynamic Tags Heuristic
+            let tags = [];
+            if (item.protein_g > 25) tags.push({text: "Protein Power", color: "#06b6d4"});
+            if (item.carbs_g < 10) tags.push({text: "Keto Pick", color: "#f59e0b"});
+            if (item.fiber_g > 6) tags.push({text: "High Fiber", color: "#8b5cf6"});
+            if (item.type === 'veg' && item.protein_g > 15) tags.push({text: "Veg Pro", color: "#22c55e"});
+
             card.innerHTML = `
-                <div class="diet-symbol ${item.type === 'veg' ? 'veg-symbol' : 'nonveg-symbol'}"></div>
-                <img src="${item.image}" alt="${item.name}">
+                <div class="menu-image-wrap" style="position:relative; overflow:hidden; background: #000;">
+                    <img src="${item.image}" alt="${item.name}" style="width:100%; height:180px; object-fit:cover;" onerror="this.src='https://images.unsplash.com/photo-1571091718767-18b5b1457add?auto=format&fit=crop&w=800&q=80'">
+                    <div class="diet-symbol ${item.type === 'veg' ? 'veg-symbol' : 'nonveg-symbol'}" style="position:absolute; top:12px; right:12px; z-index:2;"></div>
+                    <div class="tags-container" style="position: absolute; bottom: 10px; left: 10px; display: flex; gap: 4px; flex-wrap: wrap; z-index:2; padding-right: 20px;">
+                        ${tags.map(t => `<span style="background: ${t.color}; color: white; font-size: 0.5rem; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.2);">${t.text}</span>`).join("")}
+                    </div>
+                </div>
                 <div class="menu-card-content">
                     <div style="display:flex; justify-content:space-between; align-items:start;">
-                        <div>
-                            <h4 style="margin:0; font-size:1rem; font-weight:600;">${item.name}</h4>
-                            <span style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.05em;">${item.category}</span>
-                        </div>
+                        <h4 style="margin:0; font-size:0.95rem; font-weight:700;">${item.name}</h4>
                     </div>
-                    <div class="menu-macros" style="margin-top:1rem; display:flex; gap:12px; font-size:0.75rem; font-weight:500; color: rgba(255,255,255,0.6);">
-                        <span>P ${item.protein_g}g</span>
-                        <span>C ${item.carbs_g}g</span>
-                        <span>F ${item.fats_g}g</span>
-                        <span style="opacity:0.8; font-weight:700;">${item.calories} KCAL</span>
+                    <p style="font-size:0.65rem; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.05em; margin: 4px 0 12px;">${item.category} • ${item.brand}</p>
+                    <div class="menu-macros" style="display:flex; justify-content: space-between; align-items:center; font-size:0.7rem; font-weight:600; padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+                        <div style="display:flex; gap:8px; color:rgba(255,255,255,0.6);">
+                            <span>P ${item.protein_g}g</span>
+                            <span>C ${item.carbs_g}g</span>
+                            <span>F ${item.fats_g}g</span>
+                        </div>
+                        <span style="color: #fff; font-weight:700;">${item.calories} <small>KCAL</small></span>
                     </div>
                 </div>
             `;
@@ -314,15 +321,29 @@ function initRestaurantExplorer() {
     }
 
     document.querySelector("#res-search").oninput = (e) => renderB(e.target.value);
-    document.querySelector("#diet-switch").onchange = () => {
-        if (sel) fetchDynamicMenu(sel).then(renderM);
-    };
+    document.querySelector("#diet-switch").onchange = () => { if (sel) fetchDynamicMenu(sel).then(renderM); };
+    document.querySelector("#menu-sort").onchange = () => { if (sel) fetchDynamicMenu(sel).then(renderM); };
     
     filters.forEach(f => {
         f.onclick = () => {
             filters.forEach(b => b.classList.remove('active'));
             f.classList.add('active');
             currF = f.dataset.filter;
+            if (sel) fetchDynamicMenu(sel).then(renderM);
+        };
+    });
+
+    const goalBtns = document.querySelectorAll(".goal-btn");
+    goalBtns.forEach(b => {
+        b.onclick = () => {
+            if (b.classList.contains('active')) {
+                b.classList.remove('active');
+                currGoal = "none";
+            } else {
+                goalBtns.forEach(x => x.classList.remove('active'));
+                b.classList.add('active');
+                currGoal = b.dataset.goal;
+            }
             if (sel) fetchDynamicMenu(sel).then(renderM);
         };
     });

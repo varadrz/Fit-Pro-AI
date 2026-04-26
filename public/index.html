@@ -273,7 +273,7 @@
                             <div class="macro-progress-wrap">
                                 <div class="macro-progress-header"><span style="color:#06b6d4;">Protein</span></div>
                                 <div id="protein-val" style="font-weight:700; margin-bottom:8px;">0g</div>
-                                <div class="macro-bar-bg"><div class="macro-bar-fill color-protein" id="protein-bar"></div></div>
+                                <div class="macro-bar-bg"><div class="macro-bar-fill color-protein" id="prot-bar"></div></div>
                             </div>
                             <div class="macro-progress-wrap">
                                 <div class="macro-progress-header"><span style="color:#f59e0b;">Carbohydrates</span></div>
@@ -289,11 +289,11 @@
                     </div>
 
                     <!-- Clinical Results & Smart Swaps -->
-                    <div id="results-card" style="display:none; margin-top:20px; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;">
+                    <div id="clinical-results-card" style="display:none; margin-top:20px; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;">
                         <div class="profile-card" style="border:1px solid rgba(6, 182, 212, 0.3); background:rgba(6, 182, 212, 0.05);">
                             <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px;">
                                 <h3 id="result-name" style="margin:0; font-size:1.4rem; font-weight:700;">Synthesis Result</h3>
-                                <span id="protein-status-badge" class="badge">Checking...</span>
+                                <span id="protein-status" class="badge">Checking...</span>
                             </div>
                             
                             <!-- Disease Tags Container -->
@@ -314,16 +314,55 @@
                         </div>
                     </div>
 
-                    <!-- Daily Metabolic Log History -->
-                    <div id="history-section" style="margin-top:40px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                            <h2 style="margin:0; font-size:1.5rem; font-weight:700; letter-spacing:-0.02em;">Daily Metabolic Log</h2>
-                            <button id="reset-day-btn" style="background:none; border:none; color:#f43f5e; font-size:0.85rem; cursor:pointer; opacity:0.7; font-weight:600;">Reset Day</button>
-                        </div>
-                        <div id="daily-log-list" class="grid-container" style="grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));">
-                            <!-- Daily items injected here -->
-                        </div>
+            </div> <!-- End Dashboard Grid -->
+
+            <!-- Daily Metabolic Log History -->
+            <div id="history-section" style="margin-top:40px; width: 100%;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h2 style="margin:0; font-size:1.5rem; font-weight:700; letter-spacing:-0.02em;">Daily Nutrition Ledger</h2>
+                    <button id="reset-day-btn" style="background:none; border:none; color:#f43f5e; font-size:0.85rem; cursor:pointer; opacity:0.7; font-weight:600;">Clear Ledger</button>
+                </div>
+                
+                <!-- Daily Macro Progress -->
+                <div class="card" style="margin-bottom: 20px; background: rgba(255,255,255,0.03);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">PROTEIN TARGET PROGRESS</span>
+                        <span id="protein-remaining" style="font-size: 0.7rem; color: var(--accent); font-weight: 700;">--g REMAINING</span>
                     </div>
+                    <div style="height: 8px; background: rgba(255,255,255,0.05); border-radius: 100px; overflow: hidden;">
+                        <div id="protein-progress-bar" style="width: 0%; height: 100%; background: var(--accent); transition: width 0.5s ease;"></div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 0; overflow-x: auto; background: rgba(255,255,255,0.02);">
+                    <table id="nutrition-ledger-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead style="background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <tr>
+                                <th style="padding: 12px; text-align: left;">Time</th>
+                                <th style="padding: 12px; text-align: left;">Food Item</th>
+                                <th style="padding: 12px; text-align: right;">Qty</th>
+                                <th style="padding: 12px; text-align: left;">Unit</th>
+                                <th style="padding: 12px; text-align: right;">Cals</th>
+                                <th style="padding: 12px; text-align: right;">Prot (g)</th>
+                                <th style="padding: 12px; text-align: right;">Carbs (g)</th>
+                                <th style="padding: 12px; text-align: right;">Fats (g)</th>
+                                <th style="padding: 12px; text-align: center;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-body">
+                            <!-- Rows injected here -->
+                        </tbody>
+                        <tfoot id="ledger-foot" style="background: rgba(255,255,255,0.05); font-weight: 800; border-top: 2px solid rgba(255,255,255,0.1);">
+                            <tr id="totals-row">
+                                <td colspan="4" style="padding: 15px; text-align: right;">DAILY TOTALS</td>
+                                <td id="total-cals" style="padding: 15px; text-align: right; color: #fff;">0</td>
+                                <td id="total-prot" style="padding: 15px; text-align: right; color: var(--accent);">0g</td>
+                                <td id="total-carbs" style="padding: 15px; text-align: right; color: #fff;">0g</td>
+                                <td id="total-fats" style="padding: 15px; text-align: right; color: #fff;">0g</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>

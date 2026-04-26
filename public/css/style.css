@@ -756,3 +756,32 @@ nav {
 .tags-container {
     padding-right: 30px; /* Space for the diet symbol */
 }
+/* Nutrition Ledger Table */
+#nutrition-ledger-table th {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+}
+
+#nutrition-ledger-table td {
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+#nutrition-ledger-table tr:hover td {
+    background: rgba(255,255,255,0.02);
+}
+
+#totals-row td {
+    border-top: 2px solid rgba(255,255,255,0.05);
+}
+
+.delete-entry-btn {
+    opacity: 0.5;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.delete-entry-btn:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}

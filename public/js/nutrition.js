@@ -7,7 +7,7 @@ const analyzeBtn = document.querySelector("#analyze-btn");
 const foodInput = document.querySelector("#food-input");
 const riskContainer = document.querySelector("#risk-summary-container");
 const supplementsContainer = document.querySelector("#supplements-container");
-const resultsCard = document.querySelector("#results-card");
+const clinicalResultsCard = document.querySelector("#clinical-results-card");
 const quickPills = document.querySelectorAll(".quick-meal-pill");
 
 // Persistence Key
@@ -15,6 +15,15 @@ const METABOLIC_LOG_KEY = 'vitality_daily_log';
 
 class LogManager {
     static getLog() {
+        const today = new Date().toLocaleDateString();
+        const storedDate = localStorage.getItem('vitality_log_date');
+        
+        // Reset if date changed (Midnight logic)
+        if (storedDate && storedDate !== today) {
+            this.clear();
+        }
+        
+        localStorage.setItem('vitality_log_date', today);
         const raw = localStorage.getItem(METABOLIC_LOG_KEY);
         return raw ? JSON.parse(raw) : [];
     }
@@ -25,7 +34,12 @@ class LogManager {
 
     static addEntry(entry) {
         const log = this.getLog();
-        log.push({ ...entry, id: Date.now(), timestamp: new Date().toLocaleTimeString() });
+        const newEntry = { 
+            ...entry, 
+            id: Date.now(), 
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+        };
+        log.push(newEntry);
         this.saveLog(log);
         return log;
     }
@@ -38,6 +52,7 @@ class LogManager {
 
     static clear() {
         localStorage.removeItem(METABOLIC_LOG_KEY);
+        localStorage.removeItem('vitality_log_date');
         return [];
     }
 }
@@ -200,8 +215,99 @@ function refreshMetabolics() {
     el.addEventListener('input', refreshMetabolics);
 });
 
+function renderLedger() {
+    const log = LogManager.getLog();
+    const body = document.querySelector("#ledger-body");
+    const totals = { cal: 0, prot: 0, carb: 0, fat: 0 };
+    
+    body.innerHTML = "";
+    
+    log.forEach(entry => {
+        totals.cal += entry.calories || 0;
+        totals.prot += entry.protein || 0;
+        totals.carb += entry.carbs || 0;
+        totals.fat += entry.fats || 0;
+
+        const row = document.createElement("tr");
+        row.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
+        row.innerHTML = `
+            <td style="padding: 12px; opacity: 0.6;">${entry.timestamp}</td>
+            <td style="padding: 12px; font-weight: 600;">${entry.food}</td>
+            <td style="padding: 12px; text-align: right; opacity: 0.8;">${entry.quantity || 1}</td>
+            <td style="padding: 12px; opacity: 0.6;">${entry.unit || 'pc'}</td>
+            <td style="padding: 12px; text-align: right; font-weight: 700;">${entry.calories}</td>
+            <td style="padding: 12px; text-align: right; color: var(--accent); font-weight: 700;">${entry.protein}g</td>
+            <td style="padding: 12px; text-align: right;">${entry.carbs}g</td>
+            <td style="padding: 12px; text-align: right;">${entry.fats}g</td>
+            <td style="padding: 12px; text-align: center;">
+                <button class="delete-entry-btn" data-id="${entry.id}" style="background: none; border: none; color: #ff3b30; cursor: pointer; padding: 5px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+            </td>
+        `;
+        body.appendChild(row);
+    });
+
+    // Update Totals Row
+    document.getElementById('total-cals').innerText = Math.round(totals.cal);
+    document.getElementById('total-prot').innerText = Math.round(totals.prot) + "g";
+    document.getElementById('total-carbs').innerText = Math.round(totals.carb) + "g";
+    document.getElementById('total-fats').innerText = Math.round(totals.fat) + "g";
+
+    // Update Protein Progress
+    const targets = calculateDailyMacros();
+    if (targets) {
+        const progress = Math.min((totals.prot / targets.protein) * 100, 100);
+        document.getElementById('protein-progress-bar').style.width = progress + "%";
+        const remaining = Math.max(targets.protein - totals.prot, 0);
+        document.getElementById('protein-remaining').innerText = `${Math.round(remaining)}g REMAINING`;
+    }
+
+    // Add delete listeners
+    document.querySelectorAll(".delete-entry-btn").forEach(btn => {
+        btn.onclick = () => {
+            LogManager.removeEntry(Number(btn.dataset.id));
+            renderLedger();
+        };
+    });
+}
+
 // Initial
 refreshMetabolics();
+renderLedger();
+
+// Clear Ledger
+document.querySelector("#reset-day-btn").onclick = () => {
+    if (confirm("Clear all entries for today?")) {
+        LogManager.clear();
+        renderLedger();
+    }
+};
+
+// Add to Log Button
+document.querySelector("#add-to-log-btn").onclick = () => {
+    if (!lastAnalysis) return alert("Please analyze food first.");
+    
+    // We take the first item for simplicity in the table view if it was a combined input, 
+    // or we could log the whole "raw" string. The user asked for "Food Item".
+    const rawInput = foodInput.value;
+    const items = parseMealInput(rawInput);
+    
+    LogManager.addEntry({
+        food: items.map(i => i.food).join(", "),
+        quantity: items[0].quantity,
+        unit: items[0].unit,
+        calories: lastAnalysis.calories,
+        protein: lastAnalysis.protein,
+        carbs: lastAnalysis.carbs,
+        fats: lastAnalysis.fats
+    });
+    
+    renderLedger();
+    foodInput.value = "";
+    lastAnalysis = null;
+    alert("Logged successfully!");
+};
 
 analyzeBtn.addEventListener("click", async () => {
     const foodData = foodInput.value;
@@ -218,7 +324,8 @@ analyzeBtn.addEventListener("click", async () => {
 
     analyzeBtn.disabled = true;
     analyzeBtn.innerText = "Analyzing Risk...";
-    resultsCard.classList.add('pulse-loading');
+    clinicalResultsCard.classList.add('pulse-loading');
+    clinicalResultsCard.style.display = 'block'; // Ensure it's shown
     riskContainer.innerHTML = "<p style='text-align:center; opacity:0.6;'>Calculating metabolic impact...</p>";
 
     try {
@@ -279,6 +386,9 @@ analyzeBtn.addEventListener("click", async () => {
                 supplementsContainer.innerHTML += `<span style="display:inline-block; margin:4px; padding:6px 12px; background:rgba(255,255,255,0.05); border:1px solid var(--glass-border); border-radius:100px; font-size:0.7rem; color:#fff; font-weight:500;">${s}</span>`;
             });
         }
+        
+        lastAnalysis = data; // Store for logging
+
 
     } catch (err) {
         console.error("Analysis failure:", err);
@@ -286,7 +396,7 @@ analyzeBtn.addEventListener("click", async () => {
     } finally {
         analyzeBtn.disabled = false;
         analyzeBtn.innerText = "Analyze Health Risks";
-        resultsCard.classList.remove('pulse-loading');
+        clinicalResultsCard.classList.remove('pulse-loading');
     }
 });
 

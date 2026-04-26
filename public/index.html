@@ -286,7 +286,7 @@
                                 <div class="macro-bar-bg"><div class="macro-bar-fill color-fats" id="fat-bar"></div></div>
                             </div>
                         </div>
-                    </div>
+                    </div> </div>
 
                     <!-- Clinical Results & Smart Swaps -->
                     <div id="clinical-results-card" style="display:none; margin-top:20px; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;">
@@ -316,11 +316,13 @@
 
             </div> <!-- End Dashboard Grid -->
 
-            <!-- Daily Metabolic Log History -->
-            <div id="history-section" style="margin-top:40px; width: 100%;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <h2 style="margin:0; font-size:1.5rem; font-weight:700; letter-spacing:-0.02em;">Daily Nutrition Ledger</h2>
-                    <button id="reset-day-btn" style="background:none; border:none; color:#f43f5e; font-size:0.85rem; cursor:pointer; opacity:0.7; font-weight:600;">Clear Ledger</button>
+            <div id="history-section" style="margin-top:60px; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 40px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:30px;">
+                    <div>
+                        <h2 class="gradient-text" style="margin:0; font-size:2.2rem; font-weight:800; letter-spacing:-0.03em;">Daily Nutrition Ledger</h2>
+                        <p style="margin:5px 0 0 0; font-size:0.85rem; color:var(--text-muted); font-weight:500;">Persistent metabolic performance tracking.</p>
+                    </div>
+                    <button id="reset-day-btn" style="background:rgba(244, 63, 94, 0.1); border:1px solid rgba(244, 63, 94, 0.2); color:#f43f5e; font-size:0.75rem; cursor:pointer; padding: 8px 16px; border-radius: 8px; font-weight:700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">Clear Ledger</button>
                 </div>
                 
                 <!-- Daily Macro Progress -->

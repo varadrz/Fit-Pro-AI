@@ -758,14 +758,39 @@ nav {
 }
 /* Nutrition Ledger Table */
 #nutrition-ledger-table th {
-    font-size: 0.65rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--text-muted);
+    color: #fff;
+    font-weight: 800;
+    padding: 18px 12px;
+    background: rgba(255,255,255,0.03);
 }
 
 #nutrition-ledger-table td {
+    padding: 16px 12px;
     border-bottom: 1px solid rgba(255,255,255,0.03);
+    vertical-align: middle;
+}
+
+#totals-row {
+    background: rgba(0, 113, 227, 0.05);
+}
+
+#totals-row td {
+    padding: 20px 12px;
+    color: #fff;
+    font-weight: 800;
+}
+
+#nutrition-ledger-table th:nth-child(2),
+#nutrition-ledger-table td:nth-child(2) {
+    width: 35%;
+}
+
+#nutrition-ledger-table th:last-child,
+#nutrition-ledger-table td:last-child {
+    width: 50px;
 }
 
 #nutrition-ledger-table tr:hover td {

@@ -205,9 +205,7 @@ function initRestaurantExplorer() {
             if (e.key === 'Escape' && modal.style.display === 'flex') closeModal();
         });
     }
-    const filters = document.querySelectorAll(".filter-btn");
-
-    let currF = "all", sel = null, currGoal = "none";
+    let sel = null, currGoal = "all";
 
     function renderB(q = "") {
         list.innerHTML = "";
@@ -222,6 +220,14 @@ function initRestaurantExplorer() {
             `;
             d.onclick = async () => {
                 sel = b.restaurant;
+                // Reset filters to show ALL menu by default when clicking a brand
+                currGoal = "all";
+                document.querySelectorAll(".goal-btn").forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.goal === 'all') btn.classList.add('active');
+                });
+                document.querySelector("#menu-sort").value = "none";
+                
                 renderB(q);
                 menuContainer.innerHTML = `<div class="loader-wrap"><div class="loader"></div><p>Synthesizing Menu...</p></div>`;
                 const m = await fetchDynamicMenu(b.restaurant);
@@ -252,27 +258,27 @@ function initRestaurantExplorer() {
         });
 
         let filtered = enriched.filter(i => {
-            // Macro Filters
-            let passMacro = true;
-            if (currF === "high-protein") passMacro = i.protein_g > 20;
-            else if (currF === "low-carbs") passMacro = i.carbs_g < 20;
-            else if (currF === "low-calories") passMacro = i.calories < 400;
-            else if (currF === "low-fat") passMacro = i.fats_g < 10;
-            else if (currF === "high-fiber") passMacro = i.fiber_g > 5;
-
-            // Goal Filters
+            // New Goal Filters (Macro based)
             let passGoal = true;
-            if (currGoal === "fat-loss") passGoal = (i.calories < 500 && i.protein_g > 15);
-            else if (currGoal === "muscle-gain") passGoal = (i.protein_g > 25 || (i.protein_g > 15 && i.calories > 600));
-            else if (currGoal === "diabetic") passGoal = (i.carbs_g < 30 && i.sugar_g < 5);
-            else if (currGoal === "heart") passGoal = (i.fats_g < 15 && i.sodium_mg < 600);
+            if (currGoal === "high-protein") passGoal = i.protein_g > 20;
+            else if (currGoal === "low-carbs") passGoal = i.carbs_g < 25;
+            else if (currGoal === "low-calories") passGoal = i.calories < 450;
+            else if (currGoal === "low-fat") passGoal = i.fats_g < 12;
+            else if (currGoal === "high-fiber") passGoal = i.fiber_g > 5;
+
+            // Sort-based Filters (Focus)
+            let passFocus = true;
+            if (sortBy === "fat-loss") passFocus = (i.calories < 500 && i.protein_g > 15);
+            else if (sortBy === "muscle-gain") passFocus = (i.protein_g > 25 || (i.protein_g > 15 && i.calories > 600));
+            else if (sortBy === "diabetic") passFocus = (i.carbs_g < 30 && i.sugar_g < 5);
+            else if (sortBy === "heart") passFocus = (i.fats_g < 15 && i.sodium_mg < 600);
 
             let passDiet = isVegOnly ? i.type === 'veg' : true;
 
-            return passMacro && passGoal && passDiet;
+            return passGoal && passFocus && passDiet;
         });
 
-        // Sorting Logic
+        // Sorting Logic (Traditional)
         if (sortBy === "high-protein") filtered.sort((a,b) => b.protein_g - a.protein_g);
         else if (sortBy === "protein-per-cal") filtered.sort((a,b) => (b.protein_g/b.calories) - (a.protein_g/a.calories));
         else if (sortBy === "low-cal") filtered.sort((a,b) => a.calories - b.calories);
@@ -324,26 +330,12 @@ function initRestaurantExplorer() {
     document.querySelector("#diet-switch").onchange = () => { if (sel) fetchDynamicMenu(sel).then(renderM); };
     document.querySelector("#menu-sort").onchange = () => { if (sel) fetchDynamicMenu(sel).then(renderM); };
     
-    filters.forEach(f => {
-        f.onclick = () => {
-            filters.forEach(b => b.classList.remove('active'));
-            f.classList.add('active');
-            currF = f.dataset.filter;
-            if (sel) fetchDynamicMenu(sel).then(renderM);
-        };
-    });
-
     const goalBtns = document.querySelectorAll(".goal-btn");
     goalBtns.forEach(b => {
         b.onclick = () => {
-            if (b.classList.contains('active')) {
-                b.classList.remove('active');
-                currGoal = "none";
-            } else {
-                goalBtns.forEach(x => x.classList.remove('active'));
-                b.classList.add('active');
-                currGoal = b.dataset.goal;
-            }
+            goalBtns.forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+            currGoal = b.dataset.goal;
             if (sel) fetchDynamicMenu(sel).then(renderM);
         };
     });
